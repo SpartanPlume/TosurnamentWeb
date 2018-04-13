@@ -1,0 +1,166 @@
+.App {
+  margin: 20px;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.login_button {
+  position: absolute;
+  top: 22%;
+  height: 60%;
+  padding: 0 15px 0 15px;
+  font-size: 1.50rem;
+  font-weight: 600;
+  background-color: #7289da;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 25px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#body {
+  padding-top: 75px;
+}
+
+/* All input of the Editable component */
+.editable-tab-content {
+  border: 1px solid #ddd;
+  border-top: 0;
+  padding: 15px;
+}
+
+.editable {
+  border: none;
+}
+
+/*.editable:focus {
+  border: 1px solid black;
+  outline: none !important;
+  margin: 0px;
+}*/
+
+.field_group {
+  margin-bottom: 1rem;
+}
+
+/* Name of the Field component */
+.field_name {
+  display: inline-block;
+  font-weight: bold;
+  padding-bottom: .5rem;
+}
+
+/* All input of the Field component */
+.field {
+  padding: 0.375rem 0.75rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.4rem;
+}
+
+.field_error {
+  padding: 0.375rem 0.75rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.4rem;
+  border-color: #FF7851;
+}
+
+.number_field {
+  padding: 0.375rem 0.75rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.4rem;
+}
+
+.number_field_error {
+  padding: 0.375rem 0.75rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.4rem;
+  border-color: #FF7851;
+}
+
+.select {
+  padding: 0.375rem 0.75rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.4rem;
+}
+
+.textarea {
+  padding: 0.375rem 0.75rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.4rem;
+  resize: vertical;
+}
+
+.checkbox {
+  display: inline-block !important;
+}
+
+#tournament_name {
+  font-size: 3rem;
+  font-weight: bold;
+  width: 100%;
+  border-bottom: 2px solid #ddd;
+}
+
+#tournament_name_error {
+  font-size: 3rem;
+  font-weight: bold;
+  width: 100%;
+  border-bottom: 2px solid #FF7851;
+}
+
+.page_subheader {
+  margin: 50px 0 20px;
+  border-bottom: 1px solid #eee;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
