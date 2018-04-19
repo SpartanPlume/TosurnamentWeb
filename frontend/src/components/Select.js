@@ -4,12 +4,27 @@ class Select extends React.Component {
     constructor(props) {
         super(props);
         var value = props.value !== undefined && props.value !== null ? props.value : '';
+        var options = props.options !== undefined && props.options !== null ? props.options : [];
         this.state = {
-            value: value
+            value: value,
+            options: options,
+            styles: props.styles !== undefined && props.styles !== null && props.styles.length === options.length ? props.styles : ([]).fill(null, 0, options.length)
         };
         this.handleChange = this.handleChange.bind(this);
         this.onChange = props.onChange;
-        this.options = props.options !== undefined && props.options !== null ? props.options : [];
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.options !== undefined && nextProps.options !== null &&
+        nextProps.value !== undefined && nextProps.value !== null) {            
+            var styles = nextProps.styles !== undefined && nextProps.styles !== null && nextProps.styles.length === nextProps.options.length ? nextProps.styles : ([]).fill(null, 0, nextProps.options.length)
+            return {
+                value: nextProps.value,
+                options: nextProps.options,
+                styles: styles
+            }
+        }
+        return null;
     }
 
     handleChange(event) {
@@ -21,8 +36,8 @@ class Select extends React.Component {
 
     render() {
         var rows = [];
-        for (var i = 0; i < this.options.length; i++) {
-            rows.push(<option key={this.options[i]} value={this.options[i]}>{this.options[i]}</option>)
+        for (var i = 0; i < this.state.options.length; i++) {
+            rows.push(<option key={this.state.options[i]} value={this.state.options[i]} style={this.state.styles[i]}>{this.state.options[i]}</option>)
         }
         var name = "";
         var field_name = null;
@@ -34,7 +49,7 @@ class Select extends React.Component {
         }
         return (
             <div className="field_group">
-                {field_name} <select className="select" onChange={this.handleChange} value={this.state.value}>{rows}</select>
+                {field_name} <select className="select" onChange={this.handleChange} value={this.state.value} style={this.state.styles[this.state.options.findIndex((option) => (option === this.state.value))]}>{rows}</select>
             </div>
         )
     }

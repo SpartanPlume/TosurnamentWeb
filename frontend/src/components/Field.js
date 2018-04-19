@@ -4,6 +4,7 @@ class Field extends React.Component {
     constructor(props) {
         super(props);
         var default_value = props.value !== undefined && props.value !== null ? props.value : '';
+        this.empty = props.empty !== undefined && props.empty !== null ? props.empty : false;
         this.initial_value = default_value;
         this.state = {
             valid: true,
@@ -19,7 +20,7 @@ class Field extends React.Component {
     handleChange(event) {
         var value = event.target.value;
         var valid = true;
-        if (value === "") {
+        if (!this.empty && value === "") {
             valid = false;
         }
         if (this.onChange !== undefined) {

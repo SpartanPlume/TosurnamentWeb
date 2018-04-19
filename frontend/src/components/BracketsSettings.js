@@ -6,16 +6,19 @@ class BracketsSettings extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tournament: props.tournament
+            tournament: props.tournament,
+            roles: props.roles
         };
         this.update = props.update;
         this.delete = props.delete;
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.tournament !== undefined && nextProps.tournament !== null) {
+        if (nextProps.tournament !== undefined && nextProps.tournament !== null &&
+        nextProps.roles !== undefined && nextProps.roles !== null) {
             return {
-                tournament: nextProps.tournament
+                tournament: nextProps.tournament,
+                roles: nextProps.roles
             };
         }
         return null;
@@ -28,7 +31,7 @@ class BracketsSettings extends React.Component {
         return (
             <div className="brackets_settings">
                 <PageHeader bsClass="page_subheader"><small>Bracket settings</small></PageHeader>
-                <EditableTab brackets={this.state.tournament.brackets} onChange={this.update} onClickRemove={this.delete} />
+                <EditableTab brackets={this.state.tournament.brackets} roles={this.state.roles} onChange={this.update} onClickRemove={this.delete} />
             </div>
         );
     }

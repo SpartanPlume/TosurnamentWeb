@@ -39,6 +39,7 @@ def create_my_handler(session):
             self.send_json(str(json_array))
 
         def do_GET(self):
+            self.session_token = self.headers.get("Authorization")
             for subclass in Base.__subclasses__():
                 if "ROUTE" in vars(subclass):
                     if self.path.startswith(subclass.ROUTE):
@@ -50,6 +51,9 @@ def create_my_handler(session):
         def do_POST(self):
             body = self.rfile.read(int(self.headers.get('content-length', 0)))
             parameters = json.loads(body.decode('utf-8'))
+            self.session_token = None
+            if "session_token" in parameters:
+                self.session_token = parameters["session_token"]
             for subclass in Base.__subclasses__():
                 if "ROUTE" in vars(subclass):
                     if self.path.startswith(subclass.ROUTE):
@@ -81,7 +85,7 @@ def create_my_handler(session):
         def do_OPTIONS(self):
             self.send_response(200, "ok")
             self.send_header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS')
-            self.send_header("Access-Control-Allow-Headers", "Content-type")
+            self.send_header("Access-Control-Allow-Headers", "Content-type, Authorization")
             self.end_headers()
     return MyHandler
 

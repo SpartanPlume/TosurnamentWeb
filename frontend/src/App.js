@@ -3,6 +3,7 @@ import './App.css';
 import './bootstrap.min.css';
 import Body from './components/Body';
 import { ToastContainer, style } from "react-toastify";
+import { withRouter } from "react-router-dom";
 import Header from "./components/Header";
 
 style({
@@ -48,19 +49,27 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: []
+      session_token: localStorage.getItem("session_token") || null
     };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+      var session_token = localStorage.getItem("session_token");
+      if (prevState === null || prevState.session_token !== session_token) {
+        return {session_token: session_token};
+      }
+      return null;
   }
 
   render() {
     return (
       <div className="App">
-        <Header/>
-        <Body/>
+        <Header session_token={this.state.session_token} />
+        <Body session_token={this.state.session_token} />
         <ToastContainer/>
       </div>
     );
   }
 }
 
-export default App;
+export default withRouter(App);

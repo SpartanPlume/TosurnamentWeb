@@ -1,5 +1,6 @@
 """/tournaments route"""
 
+import helpers.crypt
 from routes.base import Base
 from databases.bracket import Bracket
 from databases.players_spreadsheet import PlayersSpreadsheet
@@ -17,13 +18,14 @@ class Tosurnament(Base):
     def get(handler, path):
         """GET handler"""
         if path:
-            result = handler.session.query(to_query).where(to_query.id == int(path)).first()
+            result = handler.session.query(to_query).where(to_query.server_id == helpers.crypt.hash_str(path)).first()
             if result:
                 print("1 result for " + path)
-                brackets = handler.session.query(Bracket).where(Bracket.tournament_id == int(path)).all()
+                brackets = handler.session.query(Bracket).where(Bracket.tournament_id == result.id).all()
                 json_brackets = []
-                for bracket in brackets:
-                    json_brackets.append(bracket.get_dict())
+                if brackets:
+                    for bracket in brackets:
+                        json_brackets.append(bracket.get_dict())
                 result.brackets = json_brackets
                 handler.send_object(result)
             else:

@@ -22,6 +22,26 @@
   font-size: large;
 }
 
+.row.display-flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+.row.display-flex > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+}
+
+.row.display-flex > div > .thumbnail {
+  height: 100%;
+}
+
+.row.display-flex > div > .thumbnail > img {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+}
+
 .login_button {
   position: absolute;
   top: 22%;
@@ -37,6 +57,11 @@
 
 #body {
   padding-top: 75px;
+  color: #444;
+}
+
+label {
+  font-weight: 400 !important;
 }
 
 /* All input of the Editable component */
@@ -57,13 +82,14 @@
 }*/
 
 .field_group {
-  margin-bottom: 1rem;
+  margin-bottom: 25px;
 }
 
 /* Name of the Field component */
 .field_name {
   display: inline-block;
   font-weight: bold;
+  font-size: 1.6rem;
   padding-bottom: .5rem;
 }
 
@@ -137,7 +163,7 @@
   resize: vertical;
 }
 
-.checkbox {
+.checkbox, .radio {
   display: inline-block !important;
 }
 

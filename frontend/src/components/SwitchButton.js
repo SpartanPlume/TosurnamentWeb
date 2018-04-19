@@ -30,7 +30,7 @@ class SwitchButton extends React.Component {
             field_name = (<span className="field_name">{this.props.name}:</span>);
         }
         return (
-            <div>
+            <div className="field_group">
                 {field_name}
                 <Switch
                     checked={this.state.checked}
