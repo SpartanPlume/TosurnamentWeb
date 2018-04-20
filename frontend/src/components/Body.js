@@ -19,7 +19,7 @@ class Body extends React.Component {
     };
     this.discordCallback = this.discordCallback.bind(this);
     if (this.state.guilds === null) {
-      fetch("http://localhost:4000/discord/guilds", {
+      fetch("http://localhost:4000/v1/discord/guilds", {
         headers: {
           'Authorization': props.session_token
         }
@@ -42,7 +42,7 @@ class Body extends React.Component {
     if (this.state.session_token !== null) {
       formData["session_token"] = this.state.session_token;
     }
-    fetch("http://localhost:4000/discord/token", {
+    fetch("http://localhost:4000/v1/discord/tokens", {
             method: "POST",
             headers: {
               'Content-type': 'application/json'
@@ -154,14 +154,14 @@ class Tournament extends React.Component {
   componentDidMount() {
     if (this.state.guild !== null && this.props.session_token !== undefined && this.props.session_token !== null && (this.state.roles === null || this.state.channels === null)) {
       Promise.all([
-        fetch("http://localhost:4000/discord/guilds/" + this.state.guild.id + "/roles", { headers: { "Authorization": this.props.session_token } }),
-        fetch("http://localhost:4000/discord/guilds/" + this.state.guild.id + "/channels", { headers: { "Authorization": this.props.session_token } })
+        fetch("http://localhost:4000/v1/discord/guilds/" + this.state.guild.id + "/roles", { headers: { "Authorization": this.props.session_token } }),
+        fetch("http://localhost:4000/v1/discord/guilds/" + this.state.guild.id + "/channels", { headers: { "Authorization": this.props.session_token } })
       ])
       .then(([roles, channels]) => Promise.all([roles.json(), channels.json()]))
       .then(([roles, channels]) => {sessionStorage.setItem("roles", JSON.stringify(roles)); sessionStorage.setItem("channels", JSON.stringify(channels)); this.setState({ tournament: this.state.tournament, guild: this.state.guild, roles: roles, channels: channels})})
       .catch(error => console.log(error));
     }
-    fetch("http://localhost:4000/tournaments/" + this.state.guild.id)
+    fetch("http://localhost:4000/v1/tournaments?server_id=" + this.state.guild.id)
     .then(result => result.json())
     .then(tournament => this.setState({ tournament: tournament }))
     .catch(error => console.log(error));
@@ -186,7 +186,7 @@ class Tournament extends React.Component {
         });
         const formData = {};
         formData[arguments[0]] = value;
-        fetch("http://localhost:4000/tournaments/" + this.state.tournament.id, {
+        fetch("http://localhost:4000/v1/tournaments/" + this.state.tournament.id, {
           method: "PUT",
           headers: {
             'Content-type': 'application/json'
@@ -223,7 +223,7 @@ class Tournament extends React.Component {
           });
           const formData = {};
           formData[arguments[1]] = value;
-          fetch("http://localhost:4000/brackets/" + bracket_id, {
+          fetch("http://localhost:4000/v1/tournaments/" + this.state.tournament.id + "/brackets/" + bracket_id, {
             method: "PUT",
             headers: {
               'Content-type': 'application/json'
@@ -251,7 +251,7 @@ class Tournament extends React.Component {
           const formData = {};
           formData["name"] = "New bracket";
           formData["tournament_id"] = this.state.tournament.id;
-          return fetch("http://localhost:4000/brackets", {
+          return fetch("http://localhost:4000/tournaments/" + this.state.tournament.id + "/brackets", {
             method: "POST",
             headers: {
               'Content-type': 'application/json'
@@ -273,7 +273,7 @@ class Tournament extends React.Component {
           hideProgressBar: true,
           autoClose: 3000
         });
-        fetch("http://localhost:4000/brackets/" + bracket_id, {
+        fetch("http://localhost:4000/tournaments/" + this.state.tournament.id + "/brackets/" + bracket_id, {
           method: "DELETE"
         })
           .then(response => response.json())
