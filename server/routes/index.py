@@ -1,0 +1,68 @@
+"""index of /"""
+
+import os
+import importlib
+from urllib import parse
+
+def do_method(method, handler, parameters, url_parameters, ids_parameters, dir_to_list, module_name):
+    module_dir = dir_to_list.replace("/", ".").replace("\\", ".")
+    try:
+        module = importlib.import_module(module_dir + module_name)
+    except ModuleNotFoundError:
+        return False
+    method_to_do = getattr(module, method)
+    if not method_to_do:
+        #TODO? custom error if wrong method
+        return False
+    method_to_do(handler, parameters, url_parameters, ids_parameters)
+    return True
+
+def find_endpoint(method, handler, parameters, url_parameters, ids_parameters, dir_to_list, endpoint):
+    """Find the route from endpoint and call the correct method when found"""
+    if not endpoint:
+        return do_method(method, handler, parameters, url_parameters, ids_parameters, dir_to_list, ".all")
+    if not "/" in endpoint:
+        next_dir = endpoint
+        endpoint = ""
+    else:
+        [next_dir, endpoint] = endpoint.split("/", 1)
+    entries = os.listdir(dir_to_list)
+    if not next_dir in entries:
+        if next_dir.isdigit():
+            ids_parameters.append(next_dir)
+            if not endpoint:
+                return do_method(method, handler, parameters, url_parameters, ids_parameters, dir_to_list, ".single")
+            else:
+                return find_endpoint(method, handler, parameters, url_parameters, ids_parameters, dir_to_list, endpoint)
+        else:
+            return False
+    elif os.path.isdir(os.path.join(dir_to_list, next_dir)):
+        return find_endpoint(method, handler, parameters, url_parameters, ids_parameters, os.path.join(dir_to_list, next_dir), endpoint)
+    return False
+
+def do_endpoint(method, handler, endpoint, parameters):
+    """Parse url parameters and ready up the search of the endpoint"""
+    parsed_url = parse.urlparse(endpoint.strip("/"))
+    if not find_endpoint(method, handler, parameters, parse.parse_qs(parsed_url.query), [], "routes", parsed_url.path):
+        #TODO send 404 error
+        print("404 error")
+
+def get(handler, endpoint):
+    """GET method"""
+    do_endpoint("get", handler, endpoint, None)
+
+def post(handler, endpoint, parameters):
+    """POST method"""
+    do_endpoint("post", handler, endpoint, parameters)
+
+def put(handler, endpoint, parameters):
+    """PUT method"""
+    do_endpoint("put", handler, endpoint, parameters)
+
+def patch(handler, endpoint, parameters):
+    """PATCH method"""
+    do_endpoint("put", handler, endpoint, parameters)
+
+def delete(handler, endpoint):
+    """DELETE method"""
+    do_endpoint("delete", handler, endpoint, None)
