@@ -25,7 +25,7 @@ def put(handler, parameters, url_parameters, ids_parameters):
         print("PUT: single: users: This user does not exist")
         handler.send_json("{}")
         return
-    handler.session.update_columns(User, user_id, parameters)
+    handler.session.update_columns(User, int(user_id), parameters)
     print("PUT: single: users: User updated")
     handler.send_json("{}")   
 

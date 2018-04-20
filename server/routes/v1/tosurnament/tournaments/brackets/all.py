@@ -5,10 +5,10 @@ from databases.bracket import Bracket
 def get(handler, parameters, url_parameters, ids_parameters):
     """GET method"""
     [tournament_id] = ids_parameters
-    result = handler.session.query(Bracket).where(Bracket.tournament_id == tournament_id).all()
-    if result:
-        print("GET: all: brackets: " + str(len(result)) + " results")
-        handler.send_array(result)
+    results = handler.session.query(Bracket).where(Bracket.tournament_id == tournament_id).all()
+    if results:
+        print("GET: all: brackets: " + str(len(results)) + " results")
+        handler.send_array(results)
     else:
         print("GET: all: brackets: No result")
         handler.send_json("{}")

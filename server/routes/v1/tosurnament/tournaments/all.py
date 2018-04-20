@@ -1,6 +1,7 @@
 """Route to all tournaments"""
 
 from databases.tournament import Tournament
+from databases.bracket import Bracket
 from helpers.crypt import hash_str
 
 def get(handler, parameters, url_parameters, ids_parameters):
@@ -10,10 +11,15 @@ def get(handler, parameters, url_parameters, ids_parameters):
         if key in vars(Tournament):
             for value in values:
                 query.where(getattr(Tournament, key) == hash_str(value))
-    result = query.all()
-    if result:
-        print("GET: all: tournaments: " + str(len(result)) + " results")
-        handler.send_array(result)
+    results = query.all()
+    if results:
+        print("GET: all: tournaments: " + str(len(results)) + " results")
+        tournaments = []
+        for tournament in results:
+            brackets = handler.session.query(Bracket).where(Bracket.tournament_id == tournament.id).all()
+            tournament.brackets = brackets
+            tournaments.append(tournament)
+        handler.send_array(tournaments)
     else:
         print("GET: all: tournaments: No result")
         handler.send_json("{}")

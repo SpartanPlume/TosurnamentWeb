@@ -31,7 +31,7 @@ def put(handler, parameters, url_parameters, ids_parameters):
         print("PUT: single: brackets: This bracket does not exist")
         handler.send_json("{}")
         return
-    handler.session.update_columns(Bracket, bracket_id, parameters)
+    handler.session.update_columns(Bracket, int(bracket_id), parameters)
     print("PUT: single: brackets: Bracket updated")
     handler.send_json("{}")   
 

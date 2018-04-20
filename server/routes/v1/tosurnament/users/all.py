@@ -4,10 +4,10 @@ from databases.user import User
 
 def get(handler, parameters, url_parameters, ids_parameters):
     """GET method"""
-    result = handler.session.query(User).all()
-    if result:
-        print("GET: all: users: " + str(len(result)) + " results")
-        handler.send_array(result)
+    results = handler.session.query(User).all()
+    if results:
+        print("GET: all: users: " + str(len(results)) + " results")
+        handler.send_array(results)
     else:
         print("GET: all: users: No result")
         handler.send_json("{}")
