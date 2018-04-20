@@ -7,7 +7,7 @@ def get(handler, parameters, url_parameters, ids_parameters):
     [tournament_id] = ids_parameters
     result = handler.session.query(Bracket).where(Bracket.tournament_id == tournament_id).all()
     if result:
-        print("GET: all: brackets: "str(len(result)) + " results")
+        print("GET: all: brackets: " + str(len(result)) + " results")
         handler.send_array(result)
     else:
         print("GET: all: brackets: No result")
