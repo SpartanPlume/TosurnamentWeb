@@ -42,9 +42,6 @@ class Base(metaclass=BaseMetaclass):
                 to_json[k] = v
         return to_json
 
-    def get_json(self):
-        return json.dumps(self.get_dict())
-
 class BaseOperator:
     """For operator operations"""
     def __init__(self, name):

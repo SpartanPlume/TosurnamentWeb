@@ -12,8 +12,8 @@ def get(handler, parameters, url_parameters, ids_parameters):
         print("GET: single: brackets: 1 result for " + bracket_id)
         players_spreadsheet = handler.session.query(PlayersSpreadsheet).where(PlayersSpreadsheet.id == result.players_spreadsheet_id).first()
         schedules_spreadsheet = handler.session.query(SchedulesSpreadsheet).where(SchedulesSpreadsheet.id == result.schedules_spreadsheet_id).first()
-        result.players_spreadsheet = players_spreadsheet.get_dict()
-        result.schedules_spreadsheet = schedules_spreadsheet.get_dict()
+        result.players_spreadsheet = players_spreadsheet
+        result.schedules_spreadsheet = schedules_spreadsheet
         handler.send_object(result)
     else:
         print("GET: single: brackets: This bracket does not exist")

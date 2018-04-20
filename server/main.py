@@ -31,7 +31,7 @@ def create_my_handler(router, session):
             self.wfile.write(bytes(message, "utf8"))
 
         def send_object(self, obj):
-            self.send_json(obj.get_json())
+            self.send_json(json.dumps(obj, default=(lambda obj: obj.get_dict())))
 
         def send_array(self, array):
             self.send_json(json.dumps(array, default=(lambda obj: obj.get_dict())))
