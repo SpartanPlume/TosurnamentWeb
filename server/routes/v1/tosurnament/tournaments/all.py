@@ -1,10 +1,16 @@
 """Route to all tournaments"""
 
 from databases.tournament import Tournament
+from helpers.crypt import hash_str
 
 def get(handler, parameters, url_parameters, ids_parameters):
     """GET method"""
-    result = handler.session.query(Tournament).all()
+    query = handler.session.query(Tournament)
+    for key, values in url_parameters.items():
+        if key in vars(Tournament):
+            for value in values:
+                query.where(getattr(Tournament, key) == hash_str(value))
+    result = query.all()
     if result:
         print("GET: all: tournaments: " + str(len(result)) + " results")
         handler.send_array(result)

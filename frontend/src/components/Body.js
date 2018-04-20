@@ -161,9 +161,9 @@ class Tournament extends React.Component {
       .then(([roles, channels]) => {sessionStorage.setItem("roles", JSON.stringify(roles)); sessionStorage.setItem("channels", JSON.stringify(channels)); this.setState({ tournament: this.state.tournament, guild: this.state.guild, roles: roles, channels: channels})})
       .catch(error => console.log(error));
     }
-    fetch("http://localhost:4000/v1/tournaments?server_id=" + this.state.guild.id)
-    .then(result => result.json())
-    .then(tournament => this.setState({ tournament: tournament }))
+    fetch("http://localhost:4000/v1/tosurnament/tournaments?server_id=" + this.state.guild.id)
+    .then(results => results.json())
+    .then(tournaments => this.setState({ tournament: tournaments[0] }))
     .catch(error => console.log(error));
   }
 
@@ -186,7 +186,7 @@ class Tournament extends React.Component {
         });
         const formData = {};
         formData[arguments[0]] = value;
-        fetch("http://localhost:4000/v1/tournaments/" + this.state.tournament.id, {
+        fetch("http://localhost:4000/v1/tosurnament/tournaments/" + this.state.tournament.id, {
           method: "PUT",
           headers: {
             'Content-type': 'application/json'
@@ -223,7 +223,7 @@ class Tournament extends React.Component {
           });
           const formData = {};
           formData[arguments[1]] = value;
-          fetch("http://localhost:4000/v1/tournaments/" + this.state.tournament.id + "/brackets/" + bracket_id, {
+          fetch("http://localhost:4000/v1/tosurnament/tournaments/" + this.state.tournament.id + "/brackets/" + bracket_id, {
             method: "PUT",
             headers: {
               'Content-type': 'application/json'
@@ -251,7 +251,7 @@ class Tournament extends React.Component {
           const formData = {};
           formData["name"] = "New bracket";
           formData["tournament_id"] = this.state.tournament.id;
-          return fetch("http://localhost:4000/tournaments/" + this.state.tournament.id + "/brackets", {
+          return fetch("http://localhost:4000/v1/tosurnament/tournaments/" + this.state.tournament.id + "/brackets", {
             method: "POST",
             headers: {
               'Content-type': 'application/json'
@@ -273,7 +273,7 @@ class Tournament extends React.Component {
           hideProgressBar: true,
           autoClose: 3000
         });
-        fetch("http://localhost:4000/tournaments/" + this.state.tournament.id + "/brackets/" + bracket_id, {
+        fetch("http://localhost:4000/v1/tosurnament/tournaments/" + this.state.tournament.id + "/brackets/" + bracket_id, {
           method: "DELETE"
         })
           .then(response => response.json())

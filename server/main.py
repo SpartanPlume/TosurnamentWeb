@@ -34,10 +34,7 @@ def create_my_handler(router, session):
             self.send_json(obj.get_json())
 
         def send_array(self, array):
-            json_array = []
-            for obj in array:
-                json_array.append(obj.get_json())
-            self.send_json(str(json_array))
+            self.send_json(json.dumps(array, default=(lambda obj: obj.get_dict())))
 
         def do_GET(self):
             self.session_token = self.headers.get("Authorization")

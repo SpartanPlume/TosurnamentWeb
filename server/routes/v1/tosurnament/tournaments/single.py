@@ -32,9 +32,9 @@ def put(handler, parameters, url_parameters, ids_parameters):
         print("PUT: single: tournaments: This tournament does not exist")
         handler.send_json("{}")
         return
-    handler.session.update_columns(Tournament, tournament_id, parameters)
+    handler.session.update_columns(Tournament, int(tournament_id), parameters)
     print("PUT: single: tournaments: Tournament updated")
-    handler.send_json("{}")   
+    handler.send_json("{}")
 
 def delete(handler, parameters, url_parameters, ids_parameters):
     """DELETE method"""
