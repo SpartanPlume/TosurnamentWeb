@@ -44,5 +44,5 @@ def delete(handler, parameters, url_parameters, ids_parameters):
         handler.send_json("{}")
         return
     handler.session.delete(result)
-    print("DELETE: single: Bracket " + bracket_id + " deleted")
+    print("DELETE: single: brackets: Bracket " + bracket_id + " deleted")
     handler.send_json("{}")
