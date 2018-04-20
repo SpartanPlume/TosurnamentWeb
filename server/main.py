@@ -4,18 +4,19 @@ import os
 import sys
 import importlib
 import signal
+import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from routes.base import Base
 import mysql_wrapper
 import constants
-import json
 
 ROUTES_DIR = "routes"
+ROUTER_MODULE = "routes.index"
 
-def create_my_handler(session):
+def create_my_handler(router, session):
     class MyHandler(BaseHTTPRequestHandler):
         """Chooses the correct route"""
         def __init__(self, *args, **kwargs):
+            self.router = router
             self.session = session
             super(MyHandler, self).__init__(*args, **kwargs)
 
@@ -40,13 +41,12 @@ def create_my_handler(session):
 
         def do_GET(self):
             self.session_token = self.headers.get("Authorization")
-            for subclass in Base.__subclasses__():
-                if "ROUTE" in vars(subclass):
-                    if self.path.startswith(subclass.ROUTE):
-                        new_path = self.path[len(subclass.ROUTE):]
-                        while new_path.startswith('/'):
-                            new_path = new_path[1:]
-                        subclass.get(self, new_path)
+            method_to_do = getattr(self.router, "get")
+            if not method_to_do:
+                #TODO
+                self.send_json("{}")
+            print(self.path)
+            method_to_do(self, self.path)
 
         def do_POST(self):
             body = self.rfile.read(int(self.headers.get('content-length', 0)))
@@ -54,33 +54,33 @@ def create_my_handler(session):
             self.session_token = None
             if "session_token" in parameters:
                 self.session_token = parameters["session_token"]
-            for subclass in Base.__subclasses__():
-                if "ROUTE" in vars(subclass):
-                    if self.path.startswith(subclass.ROUTE):
-                        new_path = self.path[len(subclass.ROUTE):]
-                        while new_path.startswith('/'):
-                            new_path = new_path[1:]
-                        subclass.post(self, new_path, parameters)            
+            self.session_token = self.headers.get("Authorization")
+            method_to_do = getattr(self.router, "post")
+            if not method_to_do:
+                #TODO
+                self.send_json("{}")
+            print(self.path)
+            method_to_do(self, self.path, parameters)
 
         def do_PUT(self):
             body = self.rfile.read(int(self.headers.get('content-length', 0)))
             parameters = json.loads(body.decode('utf-8'))
-            for subclass in Base.__subclasses__():
-                if "ROUTE" in vars(subclass):
-                    if self.path.startswith(subclass.ROUTE):
-                        new_path = self.path[len(subclass.ROUTE):]
-                        while new_path.startswith('/'):
-                            new_path = new_path[1:]
-                        subclass.put(self, new_path, parameters)
+            self.session_token = self.headers.get("Authorization")
+            method_to_do = getattr(self.router, "put")
+            if not method_to_do:
+                #TODO
+                self.send_json("{}")
+            print(self.path)
+            method_to_do(self, self.path, parameters)
 
         def do_DELETE(self):
-            for subclass in Base.__subclasses__():
-                if "ROUTE" in vars(subclass):
-                    if self.path.startswith(subclass.ROUTE):
-                        new_path = self.path[len(subclass.ROUTE):]
-                        while new_path.startswith('/'):
-                            new_path = new_path[1:]
-                        subclass.delete(self, new_path)
+            self.session_token = self.headers.get("Authorization")
+            method_to_do = getattr(self.router, "delete")
+            if not method_to_do:
+                #TODO
+                self.send_json("{}")
+            print(self.path)
+            method_to_do(self, self.path)
 
         def do_OPTIONS(self):
             self.send_response(200, "ok")
@@ -95,10 +95,15 @@ def signal_handler(signal, frame):
 def main():
     """Main function"""
     signal.signal(signal.SIGINT, signal_handler)
-    for filename in os.listdir(ROUTES_DIR):
-        if filename != "base.py" and filename.endswith(".py"):
-            importlib.import_module(ROUTES_DIR + "." + filename[:-3])
-    handler = create_my_handler(mysql_wrapper.Session(constants.DATABASE_USERNAME, constants.DATABASE_PASSWORD, "tosurnament"))
+    try:
+        module = importlib.import_module(ROUTER_MODULE)
+    except ModuleNotFoundError:
+        return 1
+    for dirpath, dirnames, filenames in os.walk(ROUTES_DIR):
+        for filename in filenames:
+            if filename.endswith(".py"):
+                importlib.import_module(dirpath.replace("/", ".").replace("\\", ".") + "." + filename[:-3])
+    handler = create_my_handler(module, mysql_wrapper.Session(constants.DATABASE_USERNAME, constants.DATABASE_PASSWORD, "tosurnament"))
     httpd = HTTPServer(("localhost", 4000), handler)
     print("Started server at http://localhost:4000")
     httpd.serve_forever()
