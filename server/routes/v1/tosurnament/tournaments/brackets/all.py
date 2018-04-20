@@ -24,6 +24,7 @@ def post(handler, parameters, url_parameters, ids_parameters):
     for key, value in parameters.items():
         if key in obj.__dict__:
             setattr(obj, key, value)
+    setattr(obj, "tournament_id", tournament_id)
     obj = handler.session.add(obj)
     print("POST: all: brackets: Bracket created")
     handler.send_object(obj)
