@@ -36,11 +36,11 @@ class EditableTab extends React.Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.tournament !== undefined && nextProps.tournament !== null &&
+        if (nextProps.brackets !== undefined && nextProps.brackets !== null &&
         nextProps.roles !== undefined && nextProps.roles !== null) {
             return {
                 key: prevState.key,
-                tournament: nextProps.tournament,
+                brackets: nextProps.brackets,
                 all_roles: nextProps.roles,
                 roles: getValidRoles(nextProps.roles)
             };

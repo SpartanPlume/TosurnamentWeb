@@ -8,10 +8,10 @@ class Select extends React.Component {
         this.state = {
             value: value,
             options: options,
-            styles: props.styles !== undefined && props.styles !== null && props.styles.length === options.length ? props.styles : ([]).fill(null, 0, options.length)
+            styles: props.styles !== undefined && props.styles !== null && props.styles.length === options.length ? props.styles : ([]).fill(null, 0, options.length),
+            onChange: props.onChange
         };
         this.handleChange = this.handleChange.bind(this);
-        this.onChange = props.onChange;
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -21,15 +21,16 @@ class Select extends React.Component {
             return {
                 value: nextProps.value,
                 options: nextProps.options,
-                styles: styles
+                styles: styles,
+                onChange: nextProps.onChange
             }
         }
         return null;
     }
 
     handleChange(event) {
-        if (this.onChange !== undefined) {
-            this.onChange(event, event.target.value);
+        if (this.state.onChange !== undefined) {
+            this.state.onChange(event, event.target.value);
         }
         this.setState({value: event.target.value});
     }
