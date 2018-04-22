@@ -2,6 +2,7 @@
 
 import json
 from http.server import BaseHTTPRequestHandler
+import server.errors
 
 def create_my_handler(router, session):
     class MyHandler(BaseHTTPRequestHandler):
@@ -26,6 +27,9 @@ def create_my_handler(router, session):
 
         def send_array(self, array):
             self.send_json(json.dumps(array, default=(lambda obj: obj.get_dict())))
+
+        def send_error(self, error_code, description=""):
+            self.send_json(json.dumps(server.errors.get_json_from_error(error_code, description)))
 
         def do_GET(self):
             self.session_token = self.headers.get("Authorization")
