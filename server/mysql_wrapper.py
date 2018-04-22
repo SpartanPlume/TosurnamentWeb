@@ -116,7 +116,7 @@ class Query:
             cursor.execute(self.query)
         results = list(cursor.fetchall())
         if not results:
-            return None
+            return []
         to_return = []
         for result in results:
             to_return.append(helpers.crypt.decrypt_obj(self.obj(result)))
