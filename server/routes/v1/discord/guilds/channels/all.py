@@ -18,7 +18,7 @@ def get(handler, parameters, url_parameters, ids_parameters):
         print("GET: all: channels: Error")
         print(e)
         print(r.json())
-        handler.send_json("{}")
+        handler.send_error(500, "Couldn't get the data from Discord API.")
         return
     print("GET: all: channels: Success")
     handler.send_json(r.text)
@@ -37,7 +37,7 @@ def post(handler, parameters, url_parameters, ids_parameters):
         print("POST: all: channels: Error")
         print(e)
         print(r.json())
-        handler.send_json("{}")
+        handler.send_error(500, "Couldn't post the data to Discord API.")
         return
     print("POST: all: channels: Success")
     handler.send_json(r.text)

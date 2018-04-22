@@ -12,17 +12,13 @@ def get(handler, parameters, url_parameters, ids_parameters):
             for value in values:
                 query.where(getattr(Tournament, key) == hash_str(value))
     results = query.all()
-    if results:
-        print("GET: all: tournaments: " + str(len(results)) + " results")
-        tournaments = []
-        for tournament in results:
-            brackets = handler.session.query(Bracket).where(Bracket.tournament_id == tournament.id).all()
-            tournament.brackets = brackets
-            tournaments.append(tournament)
-        handler.send_array(tournaments)
-    else:
-        print("GET: all: tournaments: No result")
-        handler.send_json("{}")
+    print("GET: all: tournaments: " + str(len(results)) + " results")
+    tournaments = []
+    for tournament in results:
+        brackets = handler.session.query(Bracket).where(Bracket.tournament_id == tournament.id).all()
+        tournament.brackets = brackets
+        tournaments.append(tournament)
+    handler.send_object(tournaments)
 
 def post(handler, parameters, url_parameters, ids_parameters):
     """POST method"""

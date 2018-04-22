@@ -17,7 +17,7 @@ def get(handler, parameters, url_parameters, ids_parameters):
         handler.send_object(result)
     else:
         print("GET: single: brackets: This bracket does not exist")
-        handler.send_json("{}")
+        handler.send_error(404, "This bracket does not exist")
 
 def put(handler, parameters, url_parameters, ids_parameters):
     """PUT method"""
@@ -29,11 +29,11 @@ def put(handler, parameters, url_parameters, ids_parameters):
     result = handler.session.query(Bracket).where(Bracket.tournament_id == int(tournament_id)).where(Bracket.id == int(bracket_id)).first()
     if not result:
         print("PUT: single: brackets: This bracket does not exist")
-        handler.send_json("{}")
+        handler.send_error(404, "This bracket does not exist")
         return
     handler.session.update_columns(Bracket, int(bracket_id), parameters)
     print("PUT: single: brackets: Bracket updated")
-    handler.send_json("{}")   
+    handler.send_json("{}")
 
 def delete(handler, parameters, url_parameters, ids_parameters):
     """DELETE method"""
@@ -41,7 +41,7 @@ def delete(handler, parameters, url_parameters, ids_parameters):
     result = handler.session.query(Bracket).where(Bracket.tournament_id == int(tournament_id)).where(Bracket.id == int(bracket_id)).first()
     if not result:
         print("PUT: single: brackets: This bracket does not exist")
-        handler.send_json("{}")
+        handler.send_error(404, "This bracket does not exist")
         return
     handler.session.delete(result)
     print("DELETE: single: brackets: Bracket " + bracket_id + " deleted")

@@ -25,9 +25,6 @@ def create_my_handler(router, session):
         def send_object(self, obj):
             self.send_json(json.dumps(obj, default=(lambda obj: obj.get_dict())))
 
-        def send_array(self, array):
-            self.send_json(json.dumps(array, default=(lambda obj: obj.get_dict())))
-
         def send_error(self, error_code, description=""):
             self.send_json(json.dumps(server.errors.get_json_from_error(error_code, description)))
 

@@ -5,12 +5,8 @@ from databases.user import User
 def get(handler, parameters, url_parameters, ids_parameters):
     """GET method"""
     results = handler.session.query(User).all()
-    if results:
-        print("GET: all: users: " + str(len(results)) + " results")
-        handler.send_array(results)
-    else:
-        print("GET: all: users: No result")
-        handler.send_json("{}")
+    print("GET: all: users: " + str(len(results)) + " results")
+    handler.send_object(results)
 
 def post(handler, parameters, url_parameters, ids_parameters):
     """POST method"""

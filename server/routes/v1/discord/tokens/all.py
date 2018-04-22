@@ -50,7 +50,7 @@ def post(handler, parameters, url_parameters, ids_parameters):
             print("POST: all: tokens: Error")
             print(r.json())
             print(e)
-            handler.send_json("{}")
+            handler.send_error(500, "Couldn't post the data to Discord API.")
             return
         session_token = store_token(handler, r.json())
         data = {
@@ -60,4 +60,4 @@ def post(handler, parameters, url_parameters, ids_parameters):
         handler.send_json(json.dumps(data))
         return
     print("POST: all: tokens: No code")
-    handler.send_json("{}")
+    handler.send_error(401, "Did you send a correct code ?")

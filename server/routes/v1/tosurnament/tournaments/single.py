@@ -18,7 +18,7 @@ def get(handler, parameters, url_parameters, ids_parameters):
         handler.send_object(result)
     else:
         print("GET: single: tournaments: This tournament does not exist")
-        handler.send_json("{}")
+        handler.send_error(404, "This tournament does not exist")
 
 def put(handler, parameters, url_parameters, ids_parameters):
     """PUT method"""
@@ -30,7 +30,7 @@ def put(handler, parameters, url_parameters, ids_parameters):
     result = handler.session.query(Tournament).where(Tournament.id == int(tournament_id)).first()
     if not result:
         print("PUT: single: tournaments: This tournament does not exist")
-        handler.send_json("{}")
+        handler.send_error(404, "This tournament does not exist")
         return
     handler.session.update_columns(Tournament, int(tournament_id), parameters)
     print("PUT: single: tournaments: Tournament updated")
@@ -42,7 +42,7 @@ def delete(handler, parameters, url_parameters, ids_parameters):
     result = handler.session.query(Tournament).where(Tournament.id == int(tournament_id)).first()
     if not result:
         print("PUT: single: tournaments: This tournament does not exist")
-        handler.send_json("{}")
+        handler.send_error(404, "This tournament does not exist")
         return
     handler.session.delete(result)
     print("DELETE: single: tournaments: Tournament " + tournament_id + " deleted")

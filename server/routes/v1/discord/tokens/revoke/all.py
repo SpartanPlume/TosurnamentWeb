@@ -25,7 +25,7 @@ def post(handler, parameters, url_parameters, ids_parameters):
         print("POST: all: tokens/revoke: Error")
         print(e)
         print(r.json())
-        handler.send_json("{}")
+        handler.send_error(500, "Couldn't post the data to Discord API.")
         return
     print("POST: all: tokens/revoke: Success")
     handler.send_json(r.text)

@@ -12,8 +12,8 @@ def do_method(method, handler, parameters, url_parameters, ids_parameters, dir_t
         return False
     method_to_do = getattr(module, method)
     if not method_to_do:
-        #TODO? custom error if wrong method
-        return False
+        handler.send_error(405, "The HTTP method used is not valid for the location specified")
+        return True
     method_to_do(handler, parameters, url_parameters, ids_parameters)
     return True
 
@@ -44,7 +44,7 @@ def do_endpoint(method, handler, endpoint, parameters):
     """Parse url parameters and ready up the search of the endpoint"""
     parsed_url = parse.urlparse(endpoint.strip("/"))
     if not find_endpoint(method, handler, parameters, parse.parse_qs(parsed_url.query), [], "routes", parsed_url.path):
-        #TODO send 404 error
+        handler.send_error(404, "The resource at the location specified doesn't exist")
         print("404 error")
 
 def get(handler, endpoint):

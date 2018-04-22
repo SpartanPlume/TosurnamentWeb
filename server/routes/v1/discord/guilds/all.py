@@ -23,7 +23,7 @@ def get(handler, parameters, url_parameters, ids_parameters):
         print("GET: all: guilds: Error")
         print(e)
         print(r.json())
-        handler.send_json("{}")
+        handler.send_error(500, "Couldn't get the data from Discord API.")
         return
     print("GET: all: guilds: Success")
     handler.send_json(r.text)

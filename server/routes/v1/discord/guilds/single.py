@@ -10,11 +10,6 @@ API_ENDPOINT = 'https://discordapp.com/api/v6'
 def get(handler, parameters, url_parameters, ids_parameters):
     """GET method"""
     [guild_id] = ids_parameters
-    token = handler.session.query(Token).where(Token.session_token == hash_str(handler.session_token)).first()
-    if not token:
-        print("GET: single: guilds: 401 Unauthorized")
-        handler.send_json("{}")
-        return
     headers = {
         'Authorization': 'Bot ' + constants.TOKEN
     }
@@ -25,7 +20,7 @@ def get(handler, parameters, url_parameters, ids_parameters):
         print("GET: single: guilds: Error")
         print(e)
         print(r.json())
-        handler.send_json("{}")
+        handler.send_error(500, "Couldn't get the data from Discord API.")
         return
     print("GET: single: guilds: Success")
     handler.send_json(r.text)
