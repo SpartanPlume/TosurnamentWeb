@@ -26,14 +26,16 @@ def create_my_handler(router, session):
             self.send_json(json.dumps(obj, default=(lambda obj: obj.get_dict())))
 
         def send_error(self, error_code, description=""):
-            self.send_json(json.dumps(server.errors.get_json_from_error(error_code, description)))
+            self.send_response(error_code)
+            slef.send_header('Content-type', 'application/json')
+            self.end_headers()
+            self.wfile.write(bytes(json.dumps(server.errors.get_json_from_error(error_code, description)), "utf8"))
 
         def do_GET(self):
             self.session_token = self.headers.get("Authorization")
             method_to_do = getattr(self.router, "get")
             if not method_to_do:
-                #TODO
-                self.send_json("{}")
+                self.send_error(404, "The resource at the location specified doesn't exist")
             print(self.path)
             method_to_do(self, self.path)
 
@@ -46,8 +48,7 @@ def create_my_handler(router, session):
             self.session_token = self.headers.get("Authorization")
             method_to_do = getattr(self.router, "post")
             if not method_to_do:
-                #TODO
-                self.send_json("{}")
+                self.send_error(404, "The resource at the location specified doesn't exist")
             print(self.path)
             method_to_do(self, self.path, parameters)
 
@@ -57,8 +58,7 @@ def create_my_handler(router, session):
             self.session_token = self.headers.get("Authorization")
             method_to_do = getattr(self.router, "put")
             if not method_to_do:
-                #TODO
-                self.send_json("{}")
+                self.send_error(404, "The resource at the location specified doesn't exist")
             print(self.path)
             method_to_do(self, self.path, parameters)
 
@@ -66,8 +66,7 @@ def create_my_handler(router, session):
             self.session_token = self.headers.get("Authorization")
             method_to_do = getattr(self.router, "delete")
             if not method_to_do:
-                #TODO
-                self.send_json("{}")
+                self.send_error(404, "The resource at the location specified doesn't exist")
             print(self.path)
             method_to_do(self, self.path)
 
