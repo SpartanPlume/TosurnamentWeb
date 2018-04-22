@@ -27,7 +27,7 @@ def create_my_handler(router, session):
 
         def send_error(self, error_code, description=""):
             self.send_response(error_code)
-            slef.send_header('Content-type', 'application/json')
+            self.send_header('Content-type', 'application/json')
             self.end_headers()
             self.wfile.write(bytes(json.dumps(server.errors.get_json_from_error(error_code, description)), "utf8"))
 
