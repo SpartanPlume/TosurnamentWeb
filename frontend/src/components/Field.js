@@ -16,7 +16,7 @@ class Field extends React.Component {
         this.onBlur = props.onBlur;
         this.placeholder = props.placeholder !== undefined ? props.placeholder : '';
     }
-
+    
     handleChange(event) {
         var value = event.target.value;
         var valid = true;
@@ -28,7 +28,7 @@ class Field extends React.Component {
         }
         this.setState({valid: valid, value: value});
     }
-
+    
     handleBlur(event) {
         if (this.onBlur !== undefined) {
             if (this.state.valid && this.initial_value !== this.state.value) {
@@ -39,7 +39,7 @@ class Field extends React.Component {
             }
         }
     }
-
+    
     static getDerivedStateFromProps(nextProps, prevState) {
         var value = nextProps.value !== undefined && nextProps.value !== null ? nextProps.value : '';
         if (value !== prevState.value) {
@@ -50,7 +50,7 @@ class Field extends React.Component {
         }
         return null;
     }
-
+    
     render() {
         var name = "";
         var field_name = null;
@@ -62,10 +62,10 @@ class Field extends React.Component {
         }
         return (
             <div className="field_group">
-                {field_name} <input className={this.state.valid ? "field" : "field_error"} type="text" value={this.state.value} onChange={this.handleChange} onBlur={this.handleBlur} placeholder={this.placeholder} />
+                {field_name} <input className={this.state.valid ? "field" : "field_error"} type="text" value={this.state.value} onChange={this.handleChange} onBlur={this.handleBlur} placeholder={this.placeholder}/>
             </div>
         )
     }
 };
-  
+
 export default Field;

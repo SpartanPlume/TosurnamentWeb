@@ -12,7 +12,7 @@ class ReschedulesSettings extends React.Component {
         };
         this.update = props.update;
     }
-
+    
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.tournament !== undefined && nextProps.tournament !== null) {
             return {
@@ -21,7 +21,7 @@ class ReschedulesSettings extends React.Component {
         }
         return null;
     }
-
+    
     updateBooleanFromIndex() {
         if (arguments.length === 3) {
             if (this.update !== undefined && this.update !== null) {
@@ -37,7 +37,7 @@ class ReschedulesSettings extends React.Component {
             }
         }
     }
-
+    
     render() {
         if (this.state.tournament === undefined || this.state.tournament === null || this.update === undefined || this.update === null) {
             return (<div/>);
@@ -45,10 +45,10 @@ class ReschedulesSettings extends React.Component {
         return (
             <div className="reschedules_settings">
                 <PageHeader bsClass="page_subheader"><small>Reschedules settings</small></PageHeader>
-                <RadioButtons name="Ping team" options={["Ping only the team captain of a team", "Ping team role"]} index={+ this.state.tournament.ping_team} onClick={this.updateBooleanFromIndex.bind(this, "ping_team")} />
-                <NumberField name="Hours before match" value={this.state.tournament.reschedule_hours_deadline} onBlur={this.update.bind(null, "reschedule_hours_deadline")} />
-                <DayPicker name="Reschedule Range Begin" value={this.state.tournament.reschedule_range_begin} onChange={this.update.bind(null, "reschedule_range_begin")} />
-                <DayPicker name="Reschedule Range End" value={this.state.tournament.reschedule_range_end} onChange={this.update.bind(null, "reschedule_range_end")} />
+                <RadioButtons name="Ping team" options={["Ping only the team captain of a team", "Ping team role"]} index={+ this.state.tournament.ping_team} onClick={this.updateBooleanFromIndex.bind(this, "ping_team")}/>
+                <NumberField name="Hours before match" value={this.state.tournament.reschedule_hours_deadline} onBlur={this.update.bind(null, "reschedule_hours_deadline")}/>
+                <DayPicker name="Reschedule Range Begin" value={this.state.tournament.reschedule_range_begin} onChange={this.update.bind(null, "reschedule_range_begin")}/>
+                <DayPicker name="Reschedule Range End" value={this.state.tournament.reschedule_range_end} onChange={this.update.bind(null, "reschedule_range_end")}/>
             </div>
         );
     }

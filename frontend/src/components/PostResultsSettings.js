@@ -10,7 +10,7 @@ class PostResultSettings extends React.Component {
         };
         this.update = props.update;
     }
-
+    
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.tournament !== undefined && nextProps.tournament !== null) {
             return {
@@ -19,7 +19,7 @@ class PostResultSettings extends React.Component {
         }
         return null;
     }
-
+    
     render() {
         if (this.state.tournament === undefined || this.state.tournament === null || this.update === undefined || this.update === null) {
             return (<div/>);
@@ -27,7 +27,7 @@ class PostResultSettings extends React.Component {
         return (
             <div className="post_result_settings">
                 <PageHeader bsClass="page_subheader"><small>Post result settings</small></PageHeader>
-                <TextArea name="Post result message" value={this.state.tournament.post_result_message} onBlur={this.update.bind(null, "post_result_message")} />
+                <TextArea name="Post result message" value={this.state.tournament.post_result_message} onBlur={this.update.bind(null, "post_result_message")}/>
             </div>
         );
     }

@@ -9,7 +9,7 @@ class Header extends React.Component {
         };
         this.title = props.title !== undefined && props.title !== null ? props.title : "Tosurnament";
     }
-
+    
     static getDerivedStateFromProps(nextProps, prevState) {
         var session_token = nextProps.session_token !== undefined ? nextProps.session_token : null;
         if (session_token !== prevState.session_token) {
@@ -19,7 +19,7 @@ class Header extends React.Component {
         }
         return null;
     }
-
+    
     render() {
         var login_button;
         if (this.state.session_token !== null) {
@@ -32,8 +32,8 @@ class Header extends React.Component {
                 <Navbar.Header>
                     <Navbar.Brand>
                         <a href="/">{this.title}</a>
-                    </Navbar.Brand>
-                    <Navbar.Toggle />
+                        </Navbar.Brand>
+                    <Navbar.Toggle/>
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav>

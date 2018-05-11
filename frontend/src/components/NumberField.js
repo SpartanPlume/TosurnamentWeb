@@ -14,7 +14,7 @@ class NumberField extends React.Component {
         this.onBlur = props.onBlur;
         this.placeholder = props.placeholder !== undefined ? props.placeholder : '';
     }
-
+    
     handleChange(event) {
         var value = event.target.value.replace(/\D/g,'');
         var valid = true;
@@ -26,7 +26,7 @@ class NumberField extends React.Component {
         }
         this.setState({valid: valid, value: value});
     }
-
+    
     handleBlur(event) {
         if (this.onBlur !== undefined) {
             if (this.state.valid && this.initial_value !== this.state.value) {
@@ -37,7 +37,7 @@ class NumberField extends React.Component {
             }
         }
     }
-
+    
     render() {
         var name = "";
         var field_name = null;

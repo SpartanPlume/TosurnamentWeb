@@ -13,10 +13,10 @@ class Select extends React.Component {
         };
         this.handleChange = this.handleChange.bind(this);
     }
-
+    
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.options !== undefined && nextProps.options !== null &&
-        nextProps.value !== undefined && nextProps.value !== null) {            
+            nextProps.value !== undefined && nextProps.value !== null) {            
             var styles = nextProps.styles !== undefined && nextProps.styles !== null && nextProps.styles.length === nextProps.options.length ? nextProps.styles : ([]).fill(null, 0, nextProps.options.length)
             return {
                 value: nextProps.value,
@@ -27,14 +27,14 @@ class Select extends React.Component {
         }
         return null;
     }
-
+    
     handleChange(event) {
         if (this.state.onChange !== undefined) {
             this.state.onChange(event, event.target.value);
         }
         this.setState({value: event.target.value});
     }
-
+    
     render() {
         var rows = [];
         for (var i = 0; i < this.state.options.length; i++) {
@@ -55,5 +55,5 @@ class Select extends React.Component {
         )
     }
 };
-  
+
 export default Select;

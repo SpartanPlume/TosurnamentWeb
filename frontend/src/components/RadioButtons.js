@@ -21,7 +21,7 @@ class RadioButtons extends React.Component {
         this.onClick = props.onClick;
         this.placeholder = props.placeholder !== undefined ? props.placeholder : '';
     }
-
+    
     handleClick(event) {
         var new_index = this.state.options.indexOf(event.target.value);
         if (this.onClick !== undefined) {
@@ -29,7 +29,7 @@ class RadioButtons extends React.Component {
         }
         this.setState({ options: this.state.options, index: new_index });
     }
-
+    
     render() {
         var field_name = null;
         if (this.props.name !== "") {

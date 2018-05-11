@@ -24,9 +24,9 @@ function getValidRoles(all_roles) {
 
 function toColor(num) {
     num >>>= 0;
-    var b = num & 0xFF,
-        g = (num & 0xFF00) >>> 8,
-        r = (num & 0xFF0000) >>> 16;
+    var b = num & 0xFF;
+    var g = (num & 0xFF00) >>> 8;
+    var r = (num & 0xFF0000) >>> 16;
     return "rgb(" + [r, g, b].join(",") + ")";
 }
 
@@ -44,7 +44,7 @@ class MainSettings extends React.Component {
         };
         this.update = props.update;
     }
-
+    
     updateValue() {
         if (arguments.length === 4) {
             var array = arguments[1];
@@ -61,11 +61,11 @@ class MainSettings extends React.Component {
             }
         }
     }
-
+    
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.tournament !== undefined && nextProps.tournament !== null &&
-        nextProps.channels !== undefined && nextProps.channels !== null &&
-        nextProps.roles !== undefined && nextProps.roles !== null) {
+            nextProps.channels !== undefined && nextProps.channels !== null &&
+            nextProps.roles !== undefined && nextProps.roles !== null) {
             return {
                 tournament: nextProps.tournament,
                 all_roles: nextProps.roles,
@@ -76,7 +76,7 @@ class MainSettings extends React.Component {
         }
         return null;
     }
-
+    
     render() {
         var formatted_channels = [""];
         var current_channel = "";
@@ -115,15 +115,15 @@ class MainSettings extends React.Component {
         return (
             <div className="main_settings">
                 <PageHeader bsClass="page_subheader"><small>Main settings</small></PageHeader>
-                <Field name="Acronym" value={this.state.tournament.acronym} onBlur={this.update.bind(null, "acronym")} placeholder="Acronym" />
-                <Select name="Staff Channel" value={current_channel} options={formatted_channels} onChange={this.updateValue.bind(this, "staff_channel_id", this.state.channels)} /> 
-                <Select name="Admin Role" value={current_roles[this.state.tournament.admin_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "admin_role_id", this.state.roles)} />
-                <Select name="Referee Role" value={current_roles[this.state.tournament.referee_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "referee_role_id", this.state.roles)} />
-                <Select name="Streamer Role" value={current_roles[this.state.tournament.streamer_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "streamer_role_id", this.state.roles)} />
-                <Select name="Commentator Role" value={current_roles[this.state.tournament.commentator_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "commentator_role_id", this.state.roles)} />
-                <Select name="Player Role" value={current_roles[this.state.tournament.player_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "player_role_id", this.state.roles)} />
-                <Select name="Team Captain Role" value={current_roles[this.state.tournament.team_captain_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "team_captain_role_id", this.state.roles)} />
-                <SwitchButton name="Enable name change" checked={this.state.tournament.name_change_enabled} onChange={this.update.bind(null, "name_change_enabled")} />
+                <Field name="Acronym" value={this.state.tournament.acronym} onBlur={this.update.bind(null, "acronym")} placeholder="Acronym"/>
+                <Select name="Staff Channel" value={current_channel} options={formatted_channels} onChange={this.updateValue.bind(this, "staff_channel_id", this.state.channels)}/> 
+                <Select name="Admin Role" value={current_roles[this.state.tournament.admin_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "admin_role_id", this.state.roles)}/>
+                <Select name="Referee Role" value={current_roles[this.state.tournament.referee_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "referee_role_id", this.state.roles)}/>
+                <Select name="Streamer Role" value={current_roles[this.state.tournament.streamer_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "streamer_role_id", this.state.roles)}/>
+                <Select name="Commentator Role" value={current_roles[this.state.tournament.commentator_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "commentator_role_id", this.state.roles)}/>
+                <Select name="Player Role" value={current_roles[this.state.tournament.player_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "player_role_id", this.state.roles)}/>
+                <Select name="Team Captain Role" value={current_roles[this.state.tournament.team_captain_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "team_captain_role_id", this.state.roles)}/>
+                <SwitchButton name="Enable name change" checked={this.state.tournament.name_change_enabled} onChange={this.update.bind(null, "name_change_enabled")}/>
             </div>
         );
     }

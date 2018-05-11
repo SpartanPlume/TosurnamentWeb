@@ -29,21 +29,21 @@ class DayPicker extends React.Component {
             "Sunday"
         ];
     }
-
+    
     updateTime(event) {
         this.setState({checked: this.state.checked, day: this.state.day, time: event.target.value});
     }
-
+    
     updateDay(event) {
         this.handleChange(event, event.target.value);
         this.setState({checked: this.state.checked, day: event.target.value, time: this.state.time});
     }
-
+    
     handleClick(event) {
         this.handleChange(event, this.state.day, !this.state.checked);
         this.setState({checked: !this.state.checked, day: this.state.day, time: this.state.time});
     }
-
+    
     handleChange(event, day=this.state.day, checked=this.state.checked) {
         if (this.onChange !== undefined) {
             var new_value;
@@ -58,7 +58,7 @@ class DayPicker extends React.Component {
             }
         }
     }
-
+    
     render() {
         var rows = [];
         for (var i = 0; i < this.options.length; i++) {
@@ -79,5 +79,5 @@ class DayPicker extends React.Component {
         )
     }
 };
-  
+
 export default DayPicker;

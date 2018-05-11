@@ -14,11 +14,11 @@ class TextArea extends React.Component {
         this.onBlur = props.onBlur;
         this.placeholder = props.placeholder !== undefined ? props.placeholder : '';
     }
-
+    
     handleChange(event) {
         this.setState({valid: true, value: event.target.value});
     }
-
+    
     handleBlur(event) {
         if (this.onBlur !== undefined && this.state.valid) {
             if (this.initial_value !== this.state.value) {
@@ -27,7 +27,7 @@ class TextArea extends React.Component {
             }
         }
     }
-
+    
     render() {
         var name = "";
         var field_name = null;
@@ -44,5 +44,5 @@ class TextArea extends React.Component {
         )
     }
 };
-  
+
 export default TextArea;

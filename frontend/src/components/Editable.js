@@ -15,7 +15,7 @@ class Editable extends React.Component {
         this.onBlur = props.onBlur;
         this.placeholder = props.placeholder !== undefined ? props.placeholder : '';
     }
-
+    
     handleChange(event) {
         var value = event.target.value;
         var valid = true;
@@ -27,7 +27,7 @@ class Editable extends React.Component {
         }
         this.setState({valid: valid, value: value});
     }
-
+    
     handleBlur(event) {
         if (this.onBlur !== undefined) {
             if (this.state.valid && this.initial_value !== this.state.value) {
@@ -38,7 +38,7 @@ class Editable extends React.Component {
             }
         }
     }
-
+    
     render() {
         return (
             <div className="field_group">
@@ -47,5 +47,5 @@ class Editable extends React.Component {
         )
     }
 };
-  
+
 export default Editable;

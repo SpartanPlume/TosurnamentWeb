@@ -11,14 +11,14 @@ class CheckBox extends React.Component {
         this.onClick = props.onClick;
         this.placeholder = props.placeholder !== undefined ? props.placeholder : '';
     }
-
+    
     handleClick(event) {
         if (this.onClick !== undefined) {
             this.onClick(event, !this.state.checked);
         }
         this.setState({checked: !this.state.checked});
     }
-
+    
     render() {
         return (
             <div className="field_group">
@@ -27,5 +27,5 @@ class CheckBox extends React.Component {
         )
     }
 };
-  
+
 export default CheckBox;
