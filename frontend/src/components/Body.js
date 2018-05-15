@@ -15,26 +15,31 @@ class Body extends React.Component {
 		super(props);
 		this.state = {
 			session_token: props.session_token !== undefined ? props.session_token : null,
-			guilds: JSON.parse(sessionStorage.getItem("guilds")) || null
+			guilds: JSON.parse(sessionStorage.getItem("guilds")) || []
 		};
 		this.discordCallback = this.discordCallback.bind(this);
-		if (this.state.guilds === null) {
-			fetch("http://localhost:4000/v1/discord/guilds", {
-				headers: {
-					'Authorization': props.session_token
-				}
-			})
-			.then(response => response.json())
-			.then(results => {console.log(results); sessionStorage.setItem("guilds", JSON.stringify(results)); this.setState({session_token: this.state.session_token, guilds: results});})
-			.catch(error => console.log(error));
+		if (this.state.guilds.length === 0) {
+			this.fetchGuilds(props.session_token);
 		}
 	}
 
 	static getDerivedStateFromProps(nextProps, prevState) {
-		if (prevState === null || prevState.session_token !== nextProps.session_token) {
-			return {session_token: nextProps.session_token};
+		if (prevState !== null) {
+			return {session_token: nextProps.session_token, guilds: prevState.guilds};
+		} else {
+			return {session_token: nextProps.session_token, guilds: []};
 		}
-		return null;
+	}
+
+	fetchGuilds(session_token) {
+		fetch("http://localhost:4000/v1/discord/guilds", {
+			headers: {
+				'Authorization': session_token
+			}
+		})
+		.then(response => response.json())
+		.then(results => {console.log(results); var guilds = Object.keys(results).length === 0 ? [] : results; sessionStorage.setItem("guilds", JSON.stringify(guilds)); this.setState({session_token: session_token, guilds: guilds});})
+		.catch(error => console.log(error));
 	}
 
 	discordCallback(props) {
@@ -50,7 +55,7 @@ class Body extends React.Component {
 			body: JSON.stringify(formData)
 		})
 		.then(response => response.json())
-		.then(results => {localStorage.setItem('session_token', results.session_token); this.props.history.push("/")})
+		.then(results => {localStorage.setItem('session_token', results.session_token); this.fetchGuilds(results.session_token); this.props.history.push("/")})
 		.catch(error => {console.log(error)});
 		return(<Redirect to="/loading"/>);
 	}
@@ -61,7 +66,7 @@ class Body extends React.Component {
 				<Route exact path="/" render={(props) => {return (<Home guilds={this.state.guilds} {...props}/>);}}/>
 				<Route exact path="/loading" component={Loading}/>
 				<Route exact path="/tournaments" component={Tournaments}/>
-				<Route path="/guild/:number" render={(props) => {return (<Tournament session_token={this.state.session_token} guild={this.state.guilds.find((guild) => guild.id === props.match.params.number)} {...props}/>);}}/>
+				<Route path="/guilds/:number" render={(props) => {return (<Tournament session_token={this.state.session_token} guild={this.state.guilds.find((guild) => guild.id === props.match.params.number)} {...props}/>);}}/>
 				<Route path="/api/discord/callback" render={(props) => {return this.discordCallback(props)}}/>
 			</div>
 		);
@@ -93,7 +98,7 @@ class Home extends React.Component {
 				if (guild.icon !== undefined) {
 					guild_icon = "https://cdn.discordapp.com/icons/" + guild.id + "/" + guild.icon + ".png";
 				}
-				guilds_icon.push(<Col key={i} xs={6} md={2}><Thumbnail href={"/guild/" + guild.id} alt={guild.name} src={guild_icon}/></Col>);
+				guilds_icon.push(<Col key={i} xs={6} md={2}><Thumbnail href={"/guilds/" + guild.id} alt={guild.name} src={guild_icon}/></Col>);
 			}
 		}
 		return (
@@ -144,10 +149,43 @@ class Tournament extends React.Component {
 			channels: JSON.parse(sessionStorage.getItem("channels"))
 		};
 		this.toast_id = null;
+		this.fetchData = this.fetchData.bind(this);
+	}
+
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if (prevState) {
+			return {
+				tournament: prevState.tournament,
+				guild: nextProps.guild,
+				roles: prevState.roles,
+				channels: prevState.channels
+			};
+		} else {
+			return {
+				tournament: {},
+				guild: nextProps.guild,
+				roles: JSON.parse(sessionStorage.getItem("roles")),
+				channels: JSON.parse(sessionStorage.getItem("channels"))
+			};
+		}
+	}
+
+	componentDidMount() {
+		this.fetchData();
+	}
+
+	componentDidUpdate() {
+		this.fetchData();
 	}
 	
-	componentDidMount() {
-		if (this.state.guild !== null && this.props.session_token !== undefined && this.props.session_token !== null && (this.state.roles === null || this.state.channels === null)) {
+	fetchData() {
+		if (this.state.guild && Object.keys(this.state.tournament).length === 0) {
+			fetch("http://localhost:4000/v1/tosurnament/tournaments?server_id=" + this.state.guild.id)
+			.then(results => results.json())
+			.then(tournaments => this.setState({ tournament: tournaments[0] }))
+			.catch(error => console.log(error));
+		}
+		if (this.state.guild && this.props.session_token && (this.state.roles === null || this.state.channels === null)) {
 			Promise.all([
 				fetch("http://localhost:4000/v1/discord/guilds/" + this.state.guild.id + "/roles", { headers: { "Authorization": this.props.session_token } }),
 				fetch("http://localhost:4000/v1/discord/guilds/" + this.state.guild.id + "/channels", { headers: { "Authorization": this.props.session_token } })
@@ -156,10 +194,6 @@ class Tournament extends React.Component {
 			.then(([roles, channels]) => {sessionStorage.setItem("roles", JSON.stringify(roles)); sessionStorage.setItem("channels", JSON.stringify(channels)); this.setState({ tournament: this.state.tournament, guild: this.state.guild, roles: roles, channels: channels})})
 			.catch(error => console.log(error));
 		}
-		fetch("http://localhost:4000/v1/tosurnament/tournaments?server_id=" + this.state.guild.id)
-		.then(results => results.json())
-		.then(tournaments => this.setState({ tournament: tournaments[0] }))
-		.catch(error => console.log(error));
 	}
 	
 	dismissToast() {
@@ -287,12 +321,12 @@ class Tournament extends React.Component {
 	}
 
 	render() {
-		if (this.state.tournament === undefined || (Object.keys(this.state.tournament).length === 0 && this.state.tournament.constructor === Object)) {
+		if (!this.state.tournament || (Object.keys(this.state.tournament).length === 0 && this.state.tournament.constructor === Object)) {
 			return (<div/>);
 		}
 		return (
 			<div>
-				<Editable id="tournament_name" value={this.state.tournament.name} onBlur={this.updateTournament.bind(this, "name")} placeholder="My Tournament"/>
+				<Editable id="tournament_name" value={this.state.tournament.name} onBlur={this.updateTournament.bind(this, "name")} placeholder="My Tournament" canBeEmpty={false}/>
 				<MainSettings tournament={this.state.tournament} channels={this.state.channels} roles={this.state.roles} update={this.updateTournament.bind(this)}/>
 				<BracketsSettings tournament={this.state.tournament} roles={this.state.roles} update={this.updateBracket.bind(this)} delete={this.deleteBracket.bind(this)}/>
 				<ReschedulesSettings tournament={this.state.tournament} update={this.updateTournament.bind(this)}/>

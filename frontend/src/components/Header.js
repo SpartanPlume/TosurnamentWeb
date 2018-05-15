@@ -1,28 +1,27 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Button, Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
 
 class Header extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            session_token: props.session_token !== undefined ? props.session_token : null
+            session_token: props.session_token ? props.session_token : null
         };
-        this.title = props.title !== undefined && props.title !== null ? props.title : "Tosurnament";
+        this.title = props.title ? props.title : "Tosurnament";
     }
     
     static getDerivedStateFromProps(nextProps, prevState) {
-        var session_token = nextProps.session_token !== undefined ? nextProps.session_token : null;
-        if (session_token !== prevState.session_token) {
+        if (nextProps.session_token) {
             return {
-                session_token: session_token
+                session_token: nextProps.session_token
             };
         }
-        return null;
     }
     
     render() {
         var login_button;
-        if (this.state.session_token !== null) {
+        if (this.state.session_token) {
             login_button = (<React.Fragment><span>Connected</span></React.Fragment>);
         } else {
             login_button = (<Button bsClass="login_button" onClick={(event) => window.location="https://discordapp.com/api/oauth2/authorize?client_id=378433574602539019&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fdiscord%2Fcallback&response_type=code&scope=identify%20guilds"}>Login with Discord</Button>);
@@ -59,5 +58,14 @@ class Header extends React.Component {
         )
     }
 }
+
+Header.propTypes = {
+    session_token: PropTypes.string,
+    title: PropTypes.string.isRequired
+};
+
+Header.defaultProps = {
+    session_token: null
+};
 
 export default Header;

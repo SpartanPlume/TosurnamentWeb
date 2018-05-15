@@ -1,14 +1,18 @@
 import React from 'react';
-import Field from "./Field";
-import SwitchButton from './SwitchButton';
-import Select from "./Select";
+import PropTypes from 'prop-types';
 import { PageHeader } from 'react-bootstrap';
+import TournamentSettings from './TournamentSettings';
+import Field from './Field';
+import SwitchButton from './SwitchButton';
+import Select from './Select';
 
 function getValidChannels(all_channels) {
     var channels = [];
-    for (var i = 0; i < all_channels.length; i++) {
-        if (all_channels[i].type === 0) {
-            channels.push(all_channels[i]);
+    if (all_channels) {
+        for (var i = 0; i < all_channels.length; i++) {
+            if (all_channels[i].type === 0) {
+                channels.push(all_channels[i]);
+            }
         }
     }
     return channels;
@@ -19,7 +23,11 @@ function findChannelById(channel) {
 }
 
 function getValidRoles(all_roles) {
-    return all_roles.filter((role) => (role.name !== "@everyone"));
+    if (all_roles) {
+        return all_roles.filter((role) => (role.name !== "@everyone"));
+    } else {
+        return [];
+    }
 }
 
 function toColor(num) {
@@ -30,25 +38,22 @@ function toColor(num) {
     return "rgb(" + [r, g, b].join(",") + ")";
 }
 
-class MainSettings extends React.Component {
+class MainSettings extends TournamentSettings {
     constructor(props) {
         super(props);
-        var all_roles = props.roles !== undefined && props.roles !== null ? props.roles : [];
-        var all_channels = props.channels !== undefined && props.channels !== null ? props.channels : [];
         this.state = {
             tournament: props.tournament,
-            all_roles: all_roles,
-            all_channels: all_channels,
-            channels: getValidChannels(all_channels),
-            roles: getValidRoles(all_roles)
+            all_roles: props.roles,
+            all_channels: props.channels,
+            roles: getValidRoles(props.roles),
+            channels: getValidChannels(props.channels)
         };
-        this.update = props.update;
     }
     
     updateValue() {
         if (arguments.length === 4) {
             var array = arguments[1];
-            if (this.update !== undefined && this.update !== null && array !== undefined && array !== null) {
+            if (this.update) {
                 var event = arguments[2];
                 var index = event.target.selectedIndex - 1;
                 var value;
@@ -63,9 +68,7 @@ class MainSettings extends React.Component {
     }
     
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.tournament !== undefined && nextProps.tournament !== null &&
-            nextProps.channels !== undefined && nextProps.channels !== null &&
-            nextProps.roles !== undefined && nextProps.roles !== null) {
+        if (nextProps.tournament) {
             return {
                 tournament: nextProps.tournament,
                 all_roles: nextProps.roles,
@@ -109,13 +112,13 @@ class MainSettings extends React.Component {
                 current_roles[this.state.roles[i].id] = role_name;
             }
         }
-        if (this.state.tournament === undefined || this.state.tournament === null || this.update === undefined || this.update === null) {
+        if (!this.state.tournament || !this.update) {
             return (<div/>);
         }
         return (
             <div className="main_settings">
                 <PageHeader bsClass="page_subheader"><small>Main settings</small></PageHeader>
-                <Field name="Acronym" value={this.state.tournament.acronym} onBlur={this.update.bind(null, "acronym")} placeholder="Acronym"/>
+                <Field name="Acronym" value={this.state.tournament.acronym} onBlur={this.update.bind(null, "acronym")} placeholder="Acronym" canBeEmpty={false}/>
                 <Select name="Staff Channel" value={current_channel} options={formatted_channels} onChange={this.updateValue.bind(this, "staff_channel_id", this.state.channels)}/> 
                 <Select name="Admin Role" value={current_roles[this.state.tournament.admin_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "admin_role_id", this.state.roles)}/>
                 <Select name="Referee Role" value={current_roles[this.state.tournament.referee_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "referee_role_id", this.state.roles)}/>
@@ -127,6 +130,16 @@ class MainSettings extends React.Component {
             </div>
         );
     }
+};
+
+MainSettings.propTypes = {
+	roles: PropTypes.arrayOf(PropTypes.object),
+	channels: PropTypes.arrayOf(PropTypes.object)
+};
+
+MainSettings.defaultProps = {
+    roles: [],
+    channels: []
 };
 
 export default MainSettings;

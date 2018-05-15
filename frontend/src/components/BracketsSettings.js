@@ -1,41 +1,46 @@
 import React from 'react';
-import EditableTab from "./EditableTab";
+import PropTypes from 'prop-types';
 import { PageHeader } from 'react-bootstrap';
+import TournamentSettings from './TournamentSettings';
+import EditableTab from './EditableTab';
 
-class BracketsSettings extends React.Component {
+class BracketsSettings extends TournamentSettings {
 	constructor(props) {
 		super(props);
 		this.state = {
 			tournament: props.tournament,
 			roles: props.roles
 		};
-		this.update = props.update;
-		this.delete = props.delete;
 	}
-	
+
 	static getDerivedStateFromProps(nextProps, prevState) {
-		if (nextProps.tournament !== undefined && nextProps.tournament !== null &&
-			nextProps.roles !== undefined && nextProps.roles !== null) {
-				return {
-					tournament: nextProps.tournament,
-					roles: nextProps.roles
-				};
-			}
-			return null;
+		if (nextProps.tournament) {
+			return {
+				tournament: nextProps.tournament,
+				roles: nextProps.roles
+			};
 		}
-		
-		render() {
-			if (this.state.tournament === undefined || this.state.tournament === null || this.update === undefined || this.update === null) {
-				return (<div/>);
-			}
-			return (
-				<div className="brackets_settings">
-					<PageHeader bsClass="page_subheader"><small>Bracket settings</small></PageHeader>
-					<EditableTab brackets={this.state.tournament.brackets} roles={this.state.roles} onChange={this.update} onClickRemove={this.delete}/>
-				</div>
-			);
+	}
+
+	render() {
+		if (!this.state.tournament || !this.update) {
+			return (<div/>);
 		}
-	};
-	
-	export default BracketsSettings;
-	
+		return (
+			<div className="brackets_settings">
+				<PageHeader bsClass="page_subheader"><small>Bracket settings</small></PageHeader>
+				<EditableTab brackets={this.state.tournament.brackets} roles={this.state.roles} onChange={this.update} onClickRemove={this.delete}/>
+			</div>
+		);
+	}
+};
+
+BracketsSettings.propTypes = {
+	roles: PropTypes.arrayOf(PropTypes.object),
+};
+
+BracketsSettings.defaultProps = {
+	roles: []
+};
+
+export default BracketsSettings;

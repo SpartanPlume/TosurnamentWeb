@@ -1,45 +1,74 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class Button extends React.Component {
 	constructor(props) {
 		super(props);
-		this.id = props.id !== undefined ? props.id : null;
-		this.value = props.value !== undefined && props.value !== null ? props.value : '';
-		this.alone = props.alone !== undefined && props.alone !== null ? props.alone : true;
-		this.disabled = props.disabled !== undefined && props.disabled !== null ? props.disabled : false;
+		this.state = {
+			id: props.id,
+			name: props.name,
+			value: props.value ? props.value: "",
+			alone: props.alone,
+			disabled: props.disabled,
+			onClick: props.onClick
+		};
 		this.handleClick = this.handleClick.bind(this);
-		this.onClick = props.onClick;
+	}
+
+	static getDerivedStateFromProps(nextProps, prevState) {
+		return {
+			id: nextProps.id,
+			name: nextProps.name,
+			value: nextProps.value ? nextProps.value: "",
+			alone: nextProps.alone,
+			disabled: nextProps.disabled,
+			onClick: nextProps.onClick
+		};
 	}
 	
 	handleClick(event) {
-		if (this.onClick !== undefined) {
-			this.onClick(event);
+		if (this.state.onClick) {
+			this.state.onClick(event);
 		}
 	}
 	
 	render() {
-		var name = "";
 		var field_name = null;
-		if (this.props.name !== undefined && this.props.name !== null) {
-			name = this.props.name;
+		if (this.state.name && this.state.name !== "") {
+			field_name = (<span className="field_name" style={{display: "block"}}>{this.state.name}:</span>);
 		}
-		if (name !== "") {
-			field_name = (<span className="field_name" style={{display: "block"}}>{this.props.name}:</span>);
-		}
-		if (this.alone) {
+		if (this.state.alone) {
 			return (
 				<div className="field_group">
-					{field_name} <button className="button" type="button" onClick={this.handleClick} disabled={this.disabled}>{this.value}</button>
+					{field_name} <button className="button" type="button" onClick={this.handleClick} disabled={this.state.disabled}>{this.state.value}</button>
 				</div>
 			);
 		} else {
 			return (
 				<React.Fragment>
-					{field_name} <button id={this.id} className="button" type="button" onClick={this.handleClick} disabled={this.disabled}>{this.value}</button>
+					{field_name} <button id={this.state.id} className="button" type="button" onClick={this.handleClick} disabled={this.state.disabled}>{this.state.value}</button>
 				</React.Fragment>
 			);
 		}
 	}
+};
+
+Button.propTypes = {
+	id: PropTypes.string,
+	name: PropTypes.string,
+	value: PropTypes.string,
+	alone: PropTypes.bool,
+	disabled: PropTypes.bool,
+	onClick: PropTypes.func
+};
+
+Button.defaultProps = {
+	id: null,
+	name: null,
+	value: null,
+	alone: true,
+	disabled: false,
+	onClick: null
 };
 
 export default Button;

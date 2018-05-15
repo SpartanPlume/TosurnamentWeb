@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 import './bootstrap.min.css';
-import { withRouter } from "react-router-dom";
-import { ToastContainer, style } from "react-toastify";
-import Header from "./components/Header";
+import { withRouter } from 'react-router-dom';
+import { ToastContainer, style } from 'react-toastify';
+import Header from './components/Header';
 import Body from './components/Body';
 
 style({

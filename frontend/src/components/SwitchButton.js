@@ -1,33 +1,31 @@
 import React from 'react';
-import Switch from "react-switch";
+import PropTypes from 'prop-types';
+import Switch from 'react-switch';
 
 class SwitchButton extends React.Component {
     constructor(props) {
         super(props);
-        var checked = props.checked !== undefined ? !!props.checked : false;
+        var checked = props.checked !== undefined && props.checked !== null ? props.checked : false;
         this.state = {
-            checked: checked
+            id: props.id,
+            name: props.name,
+            checked: checked,
+            onChange: props.onChange
         };
         this.handleChange = this.handleChange.bind(this);
-        this.onChange = props.onChange;
-        this.placeholder = props.placeholder !== undefined ? props.placeholder : '';
     }
     
     handleChange(event) {
-        if (this.onChange !== undefined) {
-            this.onChange(event, !this.state.checked);
+        if (this.state.onChange) {
+            this.state.onChange(event, !this.state.checked);
         }
         this.setState({checked: !this.state.checked});
     }
     
     render() {
-        var name = "";
         var field_name = null;
-        if (this.props.name !== undefined && this.props.name !== null) {
-            name = this.props.name;
-        }
-        if (name !== "") {
-            field_name = (<span className="field_name">{this.props.name}:</span>);
+        if (this.state.name && this.state.name !== "") {
+            field_name = (<span className="field_name">{this.state.name}:</span>);
         }
         return (
             <div className="field_group">
@@ -47,6 +45,20 @@ class SwitchButton extends React.Component {
             </div>
         )
     }
+};
+
+SwitchButton.propTypes = {
+    id: PropTypes.string,
+    name: PropTypes.string,
+    checked: PropTypes.bool,
+    onChange: PropTypes.func
+};
+
+SwitchButton.defaultProps = {
+    id: null,
+    name: null,
+    checked: null,
+    onChange: null
 };
 
 export default SwitchButton;

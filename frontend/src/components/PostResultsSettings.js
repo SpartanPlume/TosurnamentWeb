@@ -1,27 +1,11 @@
 import React from 'react';
-import TextArea from "./TextArea";
 import { PageHeader } from 'react-bootstrap';
+import TournamentSettings from './TournamentSettings';
+import TextArea from './TextArea';
 
-class PostResultSettings extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            tournament: props.tournament
-        };
-        this.update = props.update;
-    }
-    
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.tournament !== undefined && nextProps.tournament !== null) {
-            return {
-                tournament: nextProps.tournament
-            };
-        }
-        return null;
-    }
-    
+class PostResultSettings extends TournamentSettings {
     render() {
-        if (this.state.tournament === undefined || this.state.tournament === null || this.update === undefined || this.update === null) {
+        if (!this.state.tournament || !this.update) {
             return (<div/>);
         }
         return (

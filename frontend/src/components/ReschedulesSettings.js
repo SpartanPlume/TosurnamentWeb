@@ -1,30 +1,14 @@
 import React from 'react';
-import NumberField from "./NumberField";
-import DayPicker from "./DayPicker";
-import RadioButtons from "./RadioButtons";
 import { PageHeader } from 'react-bootstrap';
+import TournamentSettings from './TournamentSettings';
+import NumberField from './NumberField';
+import DayPicker from './DayPicker';
+import RadioButtons from './RadioButtons';
 
-class ReschedulesSettings extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            tournament: props.tournament
-        };
-        this.update = props.update;
-    }
-    
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.tournament !== undefined && nextProps.tournament !== null) {
-            return {
-                tournament: nextProps.tournament
-            };
-        }
-        return null;
-    }
-    
+class ReschedulesSettings extends TournamentSettings {
     updateBooleanFromIndex() {
         if (arguments.length === 3) {
-            if (this.update !== undefined && this.update !== null) {
+            if (this.update) {
                 var event = arguments[1];
                 var index = arguments[2];
                 var value;
@@ -39,7 +23,7 @@ class ReschedulesSettings extends React.Component {
     }
     
     render() {
-        if (this.state.tournament === undefined || this.state.tournament === null || this.update === undefined || this.update === null) {
+        if (!this.state.tournament || !this.update) {
             return (<div/>);
         }
         return (
