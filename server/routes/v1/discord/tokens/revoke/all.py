@@ -13,7 +13,7 @@ def post(handler, parameters, url_parameters, ids_parameters):
     token = handler.session.query(Token).where(Token.session_token == hash_str(handler.session_token)).first()
     if not token:
         print("POST: all: tokens/revoke: 401 Unauthorized")
-        handler.send_json("{}")
+        handler.send_json(401, "This token doesn't exist.")
         return
     headers = {
         'Authorization': 'Bearer ' + token.access_token

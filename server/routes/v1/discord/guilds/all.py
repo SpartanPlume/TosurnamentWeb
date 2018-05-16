@@ -11,7 +11,7 @@ def get(handler, parameters, url_parameters, ids_parameters):
     token = handler.session.query(Token).where(Token.session_token == hash_str(handler.session_token)).first()
     if not token:
         print("GET: all: guilds: 401 Unauthorized")
-        handler.send_json("{}")
+        handler.send_error(401, "Unauthorized.")
         return
     headers = {
         'Authorization': 'Bearer ' + token.access_token
