@@ -38,11 +38,12 @@ class EditableTab extends React.Component {
     
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.brackets) {
+            var all_roles = nextProps.roles ? nextProps.roles: [];
             return {
                 key: prevState.key,
                 brackets: nextProps.brackets,
-                all_roles: nextProps.roles ? nextProps.roles: [],
-                roles: getValidRoles(nextProps.roles),
+                all_roles: all_roles,
+                roles: getValidRoles(all_roles),
                 onChange: nextProps.onChange,
                 onClickRemove: nextProps.onClickRemove
             };
