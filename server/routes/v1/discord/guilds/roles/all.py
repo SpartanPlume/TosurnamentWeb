@@ -14,13 +14,11 @@ def get(handler, parameters, url_parameters, ids_parameters):
     try:
         r = requests.get(API_ENDPOINT + '/guilds/' + guild_id + '/roles', headers=headers)
         r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        print("GET: all: roles: Error")
-        print(e)
-        print(r.json())
+    except requests.exceptions.HTTPError:
+        handler.logger.exception("Couldn't get the data from Discord API.")
+        handler.logger.debug(r.text)
         handler.send_error(500, "Couldn't get the data from Discord API.")
         return
-    print("GET: all: roles: Success")
     handler.send_json(r.text)
 
 def post(handler, parameters, url_parameters, ids_parameters):
@@ -33,11 +31,9 @@ def post(handler, parameters, url_parameters, ids_parameters):
     try:
         r = requests.post(API_ENDPOINT + '/guilds/' + guild_id + '/roles', headers=headers, data=parameters)
         r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        print("POST: all: roles: Error")
-        print(e)
-        print(r.json())
+    except requests.exceptions.HTTPError:
+        handler.logger.exception("Couldn't post the data to Discord API.")
+        handler.logger.debug(r.text)
         handler.send_error(500, "Couldn't post the data to Discord API.")
         return
-    print("POST: all: roles: Success")
     handler.send_json(r.text)

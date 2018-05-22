@@ -2,6 +2,7 @@
 
 import os
 import importlib
+import logging
 from urllib import parse
 
 def do_method(method, handler, parameters, url_parameters, ids_parameters, dir_to_list, module_name):
@@ -14,6 +15,11 @@ def do_method(method, handler, parameters, url_parameters, ids_parameters, dir_t
     if not method_to_do:
         handler.send_error(405, "The HTTP method used is not valid for the location specified")
         return True
+    logger = logging.getLogger(dir_to_list.replace("\\", "/")[6:] + module_name.replace(".", "/"))
+    logger.info(method.upper())
+    for i, parameter in enumerate(ids_parameters):
+        logger.debug(method.upper() + ": Parameter " + str(i + 1) + ": " + parameter)
+    handler.logger = logger
     method_to_do(handler, parameters, url_parameters, ids_parameters)
     return True
 

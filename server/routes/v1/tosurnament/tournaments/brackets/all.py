@@ -6,14 +6,13 @@ def get(handler, parameters, url_parameters, ids_parameters):
     """GET method"""
     [tournament_id] = ids_parameters
     results = handler.session.query(Bracket).where(Bracket.tournament_id == tournament_id).all()
-    print("GET: all: brackets: " + str(len(results)) + " results")
     handler.send_object(results)
 
 def post(handler, parameters, url_parameters, ids_parameters):
     """POST method"""
     [tournament_id] = ids_parameters
     if not parameters:
-        print("POST: all: brackets: Ignoring")
+        handler.logger.debug("Ignoring")
         handler.send_json("{}")
         return
     obj = Bracket()
@@ -22,5 +21,5 @@ def post(handler, parameters, url_parameters, ids_parameters):
             setattr(obj, key, value)
     setattr(obj, "tournament_id", tournament_id)
     obj = handler.session.add(obj)
-    print("POST: all: brackets: Bracket created")
+    handler.logger.debug("Created successfully")
     handler.send_object(obj)

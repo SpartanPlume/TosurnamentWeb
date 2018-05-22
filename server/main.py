@@ -4,6 +4,7 @@ import os
 import sys
 import importlib
 import signal
+import logging
 from http.server import HTTPServer
 import mysql_wrapper
 import constants
@@ -12,12 +13,25 @@ from server.handler import create_my_handler
 ROUTES_DIR = "routes"
 ROUTER_MODULE = "routes.index"
 
+def init_logging():
+    logging.basicConfig(level=logging.DEBUG,
+            format='%(asctime)s %(name)-32s %(levelname)-8s %(message)s',
+            datefmt='%m-%d %H:%M',
+            filename='./tosurnament_web.log',
+            filemode='w')
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(name)-32s: %(levelname)-8s %(message)s')
+    console.setFormatter(formatter)
+    logging.getLogger('').addHandler(console)
+
 def signal_handler(signal, frame):
     sys.exit(0)
 
 def main():
     """Main function"""
     signal.signal(signal.SIGINT, signal_handler)
+    init_logging()
     try:
         module = importlib.import_module(ROUTER_MODULE)
     except ModuleNotFoundError:

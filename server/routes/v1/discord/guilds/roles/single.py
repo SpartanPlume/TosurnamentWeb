@@ -9,7 +9,7 @@ def patch(handler, parameters, url_parameters, ids_parameters):
     """PATCH method"""
     [guild_id, role_id] = ids_parameters
     if not parameters:
-        print("PATCH: single: roles: Ignoring")
+        handler.logger.debug("Ignoring")
         handler.send_json("{}")
         return
     headers = {
@@ -19,13 +19,11 @@ def patch(handler, parameters, url_parameters, ids_parameters):
     try:
         r = requests.patch(API_ENDPOINT + '/guilds/' + guild_id + '/roles/' + role_id, headers=headers, data=parameters)
         r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        print("PATCH: single: roles: Error")
-        print(e)
-        print(r.json())
+    except requests.exceptions.HTTPError:
+        handler.logger.exception("Couldn't patch the data from Discord API.")
+        handler.logger.debug(r.text)
         handler.send_error(500, "Couldn't patch the data to Discord API.")
         return
-    print("PATCH: single: roles: Success")
     handler.send_json(r.text)
 
 def delete(handler, parameters, url_parameters, ids_parameters):
@@ -37,11 +35,9 @@ def delete(handler, parameters, url_parameters, ids_parameters):
     try:
         r = requests.delete(API_ENDPOINT + '/guilds/' + guild_id + '/roles/' + role_id, headers=headers)
         r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        print("DELETE: single: roles: Error")
-        print(e)
-        print(r.json())
+    except requests.exceptions.HTTPError:
+        handler.logger.exception("Couldn't delete the data from Discord API.")
+        handler.logger.debug(r.text)
         handler.send_error(500, "Couldn't delete the data from Discord API.")
         return
-    print("DELETE: single: roles: Success")
     handler.send_json(r.text)

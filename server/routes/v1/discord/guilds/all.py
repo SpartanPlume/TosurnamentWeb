@@ -10,7 +10,7 @@ def get(handler, parameters, url_parameters, ids_parameters):
     """GET method"""
     token = handler.session.query(Token).where(Token.session_token == hash_str(handler.session_token)).first()
     if not token:
-        print("GET: all: guilds: 401 Unauthorized")
+        handler.logger.debug("Unauthorized")
         handler.send_error(401, "Unauthorized.")
         return
     headers = {
@@ -19,11 +19,9 @@ def get(handler, parameters, url_parameters, ids_parameters):
     try:
         r = requests.get(API_ENDPOINT + '/users/@me/guilds', headers=headers)
         r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        print("GET: all: guilds: Error")
-        print(e)
-        print(r.json())
+    except requests.exceptions.HTTPError:
+        handler.logger.exception("Couldn't get the data from Discord API.")
+        handler.logger.debug(r.text)
         handler.send_error(500, "Couldn't get the data from Discord API.")
         return
-    print("GET: all: guilds: Success")
     handler.send_json(r.text)

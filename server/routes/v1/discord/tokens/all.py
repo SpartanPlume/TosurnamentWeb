@@ -46,18 +46,16 @@ def post(handler, parameters, url_parameters, ids_parameters):
         try:
             r = requests.post(OAUTH2_ENDPOINT + '/token', data=data, headers=headers)
             r.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            print("POST: all: tokens: Error")
-            print(r.json())
-            print(e)
+        except requests.exceptions.HTTPError:
+            handler.logger.exception("Couldn't post the data to Discord API.")
+            handler.logger.debug(r.text)
             handler.send_error(500, "Couldn't post the data to Discord API.")
             return
         session_token = store_token(handler, r.json())
         data = {
             'session_token': session_token
         }
-        print("POST: all: tokens: Success")
         handler.send_json(json.dumps(data))
         return
-    print("POST: all: tokens: No code")
-    handler.send_error(401, "Did you send a correct code ?")
+    handler.logger.debug("No code")
+    handler.send_error(401, "No code sent.")

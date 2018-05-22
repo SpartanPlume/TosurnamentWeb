@@ -12,7 +12,7 @@ def post(handler, parameters, url_parameters, ids_parameters):
     """POST method"""
     token = handler.session.query(Token).where(Token.session_token == hash_str(handler.session_token)).first()
     if not token:
-        print("POST: all: tokens/revoke: 401 Unauthorized")
+        handler.logger.debug("Invalid token")
         handler.send_json(401, "This token doesn't exist.")
         return
     headers = {
@@ -21,12 +21,10 @@ def post(handler, parameters, url_parameters, ids_parameters):
     try:
         r = requests.post(OAUTH2_ENDPOINT + '/token/revoke', headers=headers)
         r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        print("POST: all: tokens/revoke: Error")
-        print(e)
-        print(r.json())
+    except requests.exceptions.HTTPError:
+        handler.logger.exception("Couldn't post the data to Discord API.")
+        handler.logger.debug(r.text)
         handler.send_error(500, "Couldn't post the data to Discord API.")
         return
-    print("POST: all: tokens/revoke: Success")
     handler.send_json(r.text)
 

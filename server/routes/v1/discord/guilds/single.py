@@ -16,11 +16,9 @@ def get(handler, parameters, url_parameters, ids_parameters):
     try:
         r = requests.get(API_ENDPOINT + '/guilds/' + guild_id, headers=headers)
         r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        print("GET: single: guilds: Error")
-        print(e)
-        print(r.json())
+    except requests.exceptions.HTTPError:
+        handler.logger.exception("Couldn't get the data from Discord API.")
+        handler.logger.debug(r.text)
         handler.send_error(500, "Couldn't get the data from Discord API.")
         return
-    print("GET: single: guilds: Success")
     handler.send_json(r.text)
