@@ -13,7 +13,11 @@ def get(handler, parameters, url_parameters, ids_parameters):
         schedules_spreadsheet = handler.session.query(SchedulesSpreadsheet).where(SchedulesSpreadsheet.id == result.schedules_spreadsheet_id).first()
         result.players_spreadsheet = players_spreadsheet
         result.schedules_spreadsheet = schedules_spreadsheet
-        handler.send_object(result)
+        etag = handler.get_etag(result)
+        if not etag:
+            handler.send_error(304)
+            return
+        handler.send_object(result, etag)
     else:
         handler.logger.debug("The bracket " + bracket_id + " does not exists")
         handler.send_error(404, "This bracket does not exist")

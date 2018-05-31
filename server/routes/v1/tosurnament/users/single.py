@@ -7,7 +7,11 @@ def get(handler, parameters, url_parameters, ids_parameters):
     [user_id] = ids_parameters
     result = handler.session.query(User).where(User.id == int(user_id)).first()
     if result:
-        handler.send_object(result)
+        etag = handler.get_etag(result)
+        if not etag:
+            handler.send_error(304)
+            return
+        handler.send_object(result, etag)
     else:
         handler.logger.debug("The user " + user_id + " does not exist")
         handler.send_error(404, "This user does not exist")

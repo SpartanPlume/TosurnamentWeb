@@ -55,10 +55,8 @@ class EditableTab extends React.Component {
             if (!this.state.onChange) {
                 return;
             }
-            var promise = this.state.onChange(0, "", null, "");
-            promise.then(response => response.json())
+            this.state.onChange(0, "", null, "")
             .then(results => {var brackets = this.state.brackets; brackets[brackets.length - 1] = results; brackets.push({name: "+"}); this.setState({key: key, brackets: brackets});})
-            .catch(error => {console.log("Error creating a bracket")});
         } else {
             this.setState({key: key});
         }

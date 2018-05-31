@@ -126,7 +126,7 @@ class MainSettings extends TournamentSettings {
                 <Select name="Commentator Role" value={current_roles[this.state.tournament.commentator_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "commentator_role_id", this.state.roles)}/>
                 <Select name="Player Role" value={current_roles[this.state.tournament.player_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "player_role_id", this.state.roles)}/>
                 <Select name="Team Captain Role" value={current_roles[this.state.tournament.team_captain_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "team_captain_role_id", this.state.roles)}/>
-                <SwitchButton name="Enable name change" checked={this.state.tournament.name_change_enabled} onChange={this.update.bind(null, "name_change_enabled")}/>
+                <SwitchButton name="Enable name change" checked={!!this.state.tournament.name_change_enabled} onChange={this.update.bind(null, "name_change_enabled")}/>
             </div>
         );
     }

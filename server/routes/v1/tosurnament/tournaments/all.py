@@ -17,7 +17,11 @@ def get(handler, parameters, url_parameters, ids_parameters):
         brackets = handler.session.query(Bracket).where(Bracket.tournament_id == tournament.id).all()
         tournament.brackets = brackets
         tournaments.append(tournament)
-    handler.send_object(tournaments)
+    etag = handler.get_etag(tournaments)
+    if not etag:
+        handler.send_error(304)
+        return
+    handler.send_object(tournaments, etag)
 
 def post(handler, parameters, url_parameters, ids_parameters):
     """POST method"""

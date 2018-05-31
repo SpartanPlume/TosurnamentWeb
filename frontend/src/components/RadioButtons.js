@@ -7,7 +7,7 @@ class RadioButtons extends React.Component {
         var options = props.options;
         var index = props.index;
         var value = options.find((option) => (props.value === option));
-        if (!index || index < -1 || index >= options.length) {
+        if (index === undefined || index === null || index < -1 || index >= options.length) {
             index = -1;
             if (!value) {
                 index = options.indexOf(value);
@@ -28,7 +28,7 @@ class RadioButtons extends React.Component {
             var options = nextProps.options;
             var index = nextProps.index;
             var value = options.find((option) => (nextProps.value === option));
-            if (!index || index < -1 || index >= options.length) {
+            if (index === undefined || index === null || index < -1 || index >= options.length) {
                 index = -1;
                 if (!value) {
                     index = options.indexOf(value);

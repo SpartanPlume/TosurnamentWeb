@@ -14,7 +14,11 @@ def get(handler, parameters, url_parameters, ids_parameters):
             for bracket in brackets:
                 json_brackets.append(bracket.get_dict())
         result.brackets = json_brackets
-        handler.send_object(result)
+        etag = handler.get_etag(result)
+        if not etag:
+            handler.send_error(304)
+            return
+        handler.send_object(result, etag)
     else:
         handler.logger.debug("The tournament " + tournament_id + " does not exists")
         handler.send_error(404, "This tournament does not exist")

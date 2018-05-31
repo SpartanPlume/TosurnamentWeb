@@ -16,33 +16,7 @@ style({
 	colorProgressDefault: "none",
 	mobile: "only screen and (max-width : 480px)",
 	fontFamily: "sans-serif",
-	zIndex: 9999,
-	TOP_LEFT: {
-		top: '1em',
-		left: '1em'
-	},
-	TOP_CENTER: {
-		top: '1em',
-		marginLeft: `-${320/2}px`,
-		left: '50%'
-	},
-	TOP_RIGHT: {
-		top: '1em',
-		right: '1em'
-	},
-	BOTTOM_LEFT: {
-		bottom: '1em',
-		left: '1em'
-	},
-	BOTTOM_CENTER: {
-		bottom: '1em',
-		marginLeft: `-${320/2}px`,
-		left: '50%'
-	},
-	BOTTOM_RIGHT: {
-		bottom: '1em',
-		right: '1em'
-	}
+	zIndex: 9999
 });
 
 class App extends Component {
@@ -66,7 +40,10 @@ class App extends Component {
 			<div className="App">
 				<Header session_token={this.state.session_token}/>
 				<Body session_token={this.state.session_token}/>
-				<ToastContainer/>
+				<ToastContainer
+					position="bottom-right"
+					autoClose={3000}
+					hideProgressBar/>
 			</div>
 		);
 	}

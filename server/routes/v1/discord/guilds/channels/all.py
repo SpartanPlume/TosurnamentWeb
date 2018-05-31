@@ -19,7 +19,11 @@ def get(handler, parameters, url_parameters, ids_parameters):
         handler.logger.debug(r.text)
         handler.send_error(500, "Couldn't get the data from Discord API.")
         return
-    handler.send_json(r.text)
+    etag = handler.get_etag(r.text)
+    if not etag:
+        handler.send_error(304)
+        return
+    handler.send_json(r.text, etag)
 
 def post(handler, parameters, url_parameters, ids_parameters):
     """POST method"""

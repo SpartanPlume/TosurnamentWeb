@@ -61,7 +61,7 @@ class Header extends React.Component {
 
 Header.propTypes = {
     session_token: PropTypes.string,
-    title: PropTypes.string.isRequired
+    title: PropTypes.string
 };
 
 Header.defaultProps = {

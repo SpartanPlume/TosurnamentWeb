@@ -6,7 +6,11 @@ def get(handler, parameters, url_parameters, ids_parameters):
     """GET method"""
     [tournament_id] = ids_parameters
     results = handler.session.query(Bracket).where(Bracket.tournament_id == tournament_id).all()
-    handler.send_object(results)
+    etag = handler.get_etag(results)
+    if not etag:
+        handler.send_error(304)
+        return
+    handler.send_object(results, etag)
 
 def post(handler, parameters, url_parameters, ids_parameters):
     """POST method"""

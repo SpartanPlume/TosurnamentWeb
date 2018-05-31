@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TextComponent from './TextComponent';
 
 class NumberField extends TextComponent {
@@ -30,6 +31,10 @@ class NumberField extends TextComponent {
             </div>
         )
     }
+};
+
+NumberField.propTypes = {
+    value: PropTypes.number
 };
 
 export default NumberField;

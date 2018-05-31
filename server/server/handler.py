@@ -1,6 +1,7 @@
 """Handler of requests"""
 
 import json
+from Crypto.Hash import SHA256
 from http.server import BaseHTTPRequestHandler
 import server.errors
 
@@ -12,24 +13,41 @@ def create_my_handler(router, session):
             self.session = session
             super(MyHandler, self).__init__(*args, **kwargs)
 
+        def get_etag(self, obj):
+            if not isinstance(obj, str):
+                etag = json.dumps(obj, default=(lambda obj: obj.get_dict()))
+            else:
+                etag = obj
+            sha = SHA256.new()
+            sha.update(str.encode(etag, 'utf-8'))
+            etag = sha.hexdigest()
+            client_etag = self.headers.get('If-None-Match')
+            if client_etag == etag:
+                return None
+            return etag
+
         def end_headers(self):
             self.send_header('Access-Control-Allow-Origin', '*')
             BaseHTTPRequestHandler.end_headers(self)
 
-        def send_json(self, message):
+        def send_json(self, message, etag=None):
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
+            if etag:
+                self.send_header('Cache-Control', 'max-age=60')
+                self.send_header('Etag', etag)
             self.end_headers()
             self.wfile.write(bytes(message, "utf8"))
 
-        def send_object(self, obj):
-            self.send_json(json.dumps(obj, default=(lambda obj: obj.get_dict())))
+        def send_object(self, obj, etag=None):
+            self.send_json(json.dumps(obj, default=(lambda obj: obj.get_dict())), etag)
 
         def send_error(self, error_code, description=""):
             self.send_response(error_code)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            self.wfile.write(bytes(json.dumps(server.errors.get_json_from_error(error_code, description)), "utf8"))
+            if error_code != 304:
+                self.wfile.write(bytes(json.dumps(server.errors.get_json_from_error(error_code, description)), "utf8"))
 
         def do_GET(self):
             self.session_token = self.headers.get("Authorization")

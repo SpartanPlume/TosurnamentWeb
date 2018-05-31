@@ -1,6 +1,7 @@
 """All possible errors of the server"""
 
 ERRORS = {
+    304: "Not Modified",
     400: "Bad Request",
     401: "Unauthorized",
     403: "Forbidden",

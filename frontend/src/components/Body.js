@@ -1,12 +1,10 @@
 import React from 'react';
-import { Route, Link, Redirect, withRouter } from 'react-router-dom';
+import { Route, Redirect, withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Editable from './Editable';
-import MainSettings from './MainSettings';
-import BracketsSettings from './BracketsSettings';
-import ReschedulesSettings from './ReschedulesSettings';
-import PostResultSettings from './PostResultsSettings';
-import { Grid, Row, Col, Thumbnail } from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import fetchApi from '../utils/fetchApi';
+import Home from './Home';
+import Tournament from './Tournament';
 
 const queryString = require('query-string');
 
@@ -14,17 +12,17 @@ class Body extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			session_token: props.session_token !== undefined ? props.session_token : null,
-			guilds: JSON.parse(sessionStorage.getItem("guilds")) || []
+			session_token: props.session_token ? props.session_token : null,
+			guilds: []
 		};
 		this.discordCallback = this.discordCallback.bind(this);
-		if (this.state.guilds.length === 0) {
+		if (this.state.session_token) {
 			this.fetchGuilds(props.session_token);
 		}
 	}
 
 	static getDerivedStateFromProps(nextProps, prevState) {
-		if (prevState !== null) {
+		if (prevState) {
 			return {session_token: nextProps.session_token, guilds: prevState.guilds};
 		} else {
 			return {session_token: nextProps.session_token, guilds: []};
@@ -32,32 +30,30 @@ class Body extends React.Component {
 	}
 
 	fetchGuilds(session_token) {
-		fetch("http://localhost:4000/v1/discord/guilds", {
+		fetchApi("/v1/discord/common/guilds", {
 			headers: {
 				'Authorization': session_token
 			}
 		})
-		.then(response => response.json())
-		.then(results => {console.log(results); var guilds = Object.keys(results).length === 0 ? [] : results; sessionStorage.setItem("guilds", JSON.stringify(guilds)); this.setState({session_token: session_token, guilds: guilds});})
-		.catch(error => console.log(error));
+		.then(results => {var guilds = Object.keys(results).length === 0 ? [] : results; this.setState({session_token: session_token, guilds: guilds});})
+		.catch(error => toast.error(error.message))
 	}
 
 	discordCallback(props) {
 		const formData = queryString.parse(props.location.search);
-		if (this.state.session_token !== null) {
+		if (this.state.session_token) {
 			formData["session_token"] = this.state.session_token;
 		}
-		fetch("http://localhost:4000/v1/discord/tokens", {
+		fetchApi("/v1/discord/tokens", {
 			method: "POST",
 			headers: {
 				'Content-type': 'application/json'
 			},
 			body: JSON.stringify(formData)
 		})
-		.then(response => response.json())
 		.then(results => {localStorage.setItem('session_token', results.session_token); this.fetchGuilds(results.session_token); this.props.history.push("/")})
-		.catch(error => {console.log(error)});
-		return(<Redirect to="/loading"/>);
+		.catch(error => toast.error(error.message))
+		return (<Redirect to="/loading"/>);
 	}
 
 	render() {
@@ -65,73 +61,12 @@ class Body extends React.Component {
 			<div id="body">
 				<Route exact path="/" render={(props) => {return (<Home guilds={this.state.guilds} {...props}/>);}}/>
 				<Route exact path="/loading" component={Loading}/>
-				<Route exact path="/tournaments" component={Tournaments}/>
-				<Route path="/guilds/:number" render={(props) => {return (<Tournament session_token={this.state.session_token} guild={this.state.guilds.find((guild) => guild.id === props.match.params.number)} {...props}/>);}}/>
+				<Route path="/guilds/:number" render={(props) => {let guild = this.state.guilds.find((guild) => guild.id === props.match.params.number); return (!guild ? null : <Tournament session_token={this.state.session_token} guild={guild} {...props}/>);}}/>
 				<Route path="/api/discord/callback" render={(props) => {return this.discordCallback(props)}}/>
 			</div>
 		);
 	}
 }
-
-class Home extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			guilds: props.guilds !== undefined && props.guilds !== null ? props.guilds : []
-		}
-	}
-	
-	static getDerivedStateFromProps(nextProps, prevState) {
-		if (nextProps.guilds !== prevState.guilds) {
-			return {guilds: nextProps.guilds};
-		}
-		return null;
-	}
-	
-	render() {
-		var guild_icon;
-		var guilds_icon = [];
-		var guild;
-		if (this.state.guilds !== undefined && this.state.guilds !== null) {
-			for (var i = 0; i < this.state.guilds.length; i++) {
-				guild = this.state.guilds[i];
-				if (guild.icon !== undefined) {
-					guild_icon = "https://cdn.discordapp.com/icons/" + guild.id + "/" + guild.icon + ".png";
-				}
-				guilds_icon.push(<Col key={i} xs={6} md={2}><Thumbnail href={"/guilds/" + guild.id} alt={guild.name} src={guild_icon}/></Col>);
-			}
-		}
-		return (
-			<div>
-				<h2>Home</h2>
-				<Grid>
-					<Row bsClass="row display-flex">
-						{guilds_icon}
-					</Row>
-				</Grid>
-			</div>
-		);
-	}
-}
-
-const Tournaments = ({ match }) => (
-	<div>
-		<h2>Tournaments</h2>
-		<ul>
-			<li>
-				<Link to={`${match.url}/rendering`}>Rendering with React</Link>
-			</li>
-			<li>
-				<Link to={`${match.url}/components`}>Components</Link>
-			</li>
-			<li>
-				<Link to={`${match.url}/props-v-state`}>Props v. State</Link>
-			</li>
-		</ul>
-		<Route path={`${match.url}/:number`} component={Tournament}/>
-		<Route exact path={match.url} render={() => <h3>Please select a topic.</h3>}/>
-	</div>
-);
 
 class Loading extends React.Component {
 	render() {
@@ -139,201 +74,12 @@ class Loading extends React.Component {
 	}
 }
 
-class Tournament extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			tournament: {},
-			guild: props.guild !== undefined ? props.guild : null,
-			roles: JSON.parse(sessionStorage.getItem("roles")),
-			channels: JSON.parse(sessionStorage.getItem("channels"))
-		};
-		this.toast_id = null;
-		this.fetchData = this.fetchData.bind(this);
-	}
+Body.propTypes = {
+	session_token: PropTypes.string
+};
 
-	static getDerivedStateFromProps(nextProps, prevState) {
-		if (prevState) {
-			return {
-				tournament: prevState.tournament,
-				guild: nextProps.guild,
-				roles: prevState.roles,
-				channels: prevState.channels
-			};
-		} else {
-			return {
-				tournament: {},
-				guild: nextProps.guild,
-				roles: JSON.parse(sessionStorage.getItem("roles")),
-				channels: JSON.parse(sessionStorage.getItem("channels"))
-			};
-		}
-	}
-
-	componentDidMount() {
-		this.fetchData();
-	}
-
-	componentDidUpdate() {
-		this.fetchData();
-	}
-	
-	fetchData() {
-		if (this.state.guild && Object.keys(this.state.tournament).length === 0) {
-			fetch("http://localhost:4000/v1/tosurnament/tournaments?server_id=" + this.state.guild.id)
-			.then(results => results.json())
-			.then(tournaments => this.setState({ tournament: tournaments[0] }))
-			.catch(error => console.log(error));
-		}
-		if (this.state.guild && this.props.session_token && (this.state.roles === null || this.state.channels === null)) {
-			Promise.all([
-				fetch("http://localhost:4000/v1/discord/guilds/" + this.state.guild.id + "/roles", { headers: { "Authorization": this.props.session_token } }),
-				fetch("http://localhost:4000/v1/discord/guilds/" + this.state.guild.id + "/channels", { headers: { "Authorization": this.props.session_token } })
-			])
-			.then(([roles, channels]) => Promise.all([roles.json(), channels.json()]))
-			.then(([roles, channels]) => {sessionStorage.setItem("roles", JSON.stringify(roles)); sessionStorage.setItem("channels", JSON.stringify(channels)); this.setState({ tournament: this.state.tournament, guild: this.state.guild, roles: roles, channels: channels})})
-			.catch(error => console.log(error));
-		}
-	}
-	
-	dismissToast() {
-		if (this.toast_id !== null) {
-			toast.dismiss(this.toast_id);
-		}
-	}
-	
-	updateTournament() {
-		if (arguments.length === 3) {
-			//var event = arguments[1];
-			var value = arguments[2];
-			if (this.state.tournament !== undefined) {
-				this.dismissToast();
-				this.toast_id = toast.info("Saving changes...", {
-					position: toast.POSITION.BOTTOM_RIGHT,
-					hideProgressBar: true,
-					autoClose: 3000
-				});
-				const formData = {};
-				formData[arguments[0]] = value;
-				fetch("http://localhost:4000/v1/tosurnament/tournaments/" + this.state.tournament.id, {
-					method: "PUT",
-					headers: {
-						'Content-type': 'application/json'
-					},
-					body: JSON.stringify(formData)
-				})
-				.then(response => response.json())
-				.then(results => {this.dismissToast(); this.toast_id = toast.success("Success!", {
-					position: toast.POSITION.BOTTOM_RIGHT,
-					hideProgressBar: true,
-					autoClose: 3000
-				})})
-				.catch(error => {this.dismissToast(); this.toast_id = toast.error("Error ='(", {
-					position: toast.POSITION.BOTTOM_RIGHT,
-					hideProgressBar: true,
-					autoClose: 3000
-				})});
-			}
-		}
-	}
-
-	updateBracket() {
-		if (arguments.length === 4) {
-			var bracket_id = arguments[0];
-			//var event = arguments[2];
-			var value = arguments[3];
-			if (this.state.tournament !== undefined) {
-				if (parseInt(bracket_id, 10) > 0) {
-					this.dismissToast();
-					this.toast_id = toast.info("Saving changes...", {
-						position: toast.POSITION.BOTTOM_RIGHT,
-						hideProgressBar: true,
-						autoClose: 3000
-					});
-					const formData = {};
-					formData[arguments[1]] = value;
-					fetch("http://localhost:4000/v1/tosurnament/tournaments/" + this.state.tournament.id + "/brackets/" + bracket_id, {
-						method: "PUT",
-						headers: {
-							'Content-type': 'application/json'
-						},
-						body: JSON.stringify(formData)
-					})
-					.then(response => response.json())
-					.then(results => {this.dismissToast(); this.toast_id = toast.success("Success!", {
-						position: toast.POSITION.BOTTOM_RIGHT,
-						hideProgressBar: true,
-						autoClose: 3000
-					})})
-					.catch(error => {this.dismissToast(); this.toast_id = toast.error("Error ='(", {
-						position: toast.POSITION.BOTTOM_RIGHT,
-						hideProgressBar: true,
-						autoClose: 3000
-					})});
-				} else {
-					/*this.dismissToast();
-					this.toast_id = toast.info("Creating a new bracket...", {
-						position: toast.POSITION.BOTTOM_RIGHT,
-						hideProgressBar: true,
-						autoClose: 3000
-					});*/
-					const formData = {};
-					formData["name"] = "New bracket";
-					formData["tournament_id"] = this.state.tournament.id;
-					return fetch("http://localhost:4000/v1/tosurnament/tournaments/" + this.state.tournament.id + "/brackets", {
-						method: "POST",
-						headers: {
-							'Content-type': 'application/json'
-						},
-						body: JSON.stringify(formData)
-					});
-				}
-			}
-		}
-	}
-
-	deleteBracket() {
-		if (arguments.length === 1) {
-			var bracket_id = arguments[0];
-			if (this.state.tournament !== undefined) {
-				this.dismissToast();
-				this.toast_id = toast.info("Deleting bracket...", {
-					position: toast.POSITION.BOTTOM_RIGHT,
-					hideProgressBar: true,
-					autoClose: 3000
-				});
-				fetch("http://localhost:4000/v1/tosurnament/tournaments/" + this.state.tournament.id + "/brackets/" + bracket_id, {
-					method: "DELETE"
-				})
-				.then(response => response.json())
-				.then(results => {this.dismissToast(); this.toast_id = toast.success("Success!", {
-					position: toast.POSITION.BOTTOM_RIGHT,
-					hideProgressBar: true,
-					autoClose: 3000
-				})})
-				.catch(error => {this.dismissToast(); this.toast_id = toast.error("Error ='(", {
-					position: toast.POSITION.BOTTOM_RIGHT,
-					hideProgressBar: true,
-					autoClose: 3000
-				})});
-			}
-		}
-	}
-
-	render() {
-		if (!this.state.tournament || (Object.keys(this.state.tournament).length === 0 && this.state.tournament.constructor === Object)) {
-			return (<div/>);
-		}
-		return (
-			<div>
-				<Editable id="tournament_name" value={this.state.tournament.name} onBlur={this.updateTournament.bind(this, "name")} placeholder="My Tournament" canBeEmpty={false}/>
-				<MainSettings tournament={this.state.tournament} channels={this.state.channels} roles={this.state.roles} update={this.updateTournament.bind(this)}/>
-				<BracketsSettings tournament={this.state.tournament} roles={this.state.roles} update={this.updateBracket.bind(this)} delete={this.deleteBracket.bind(this)}/>
-				<ReschedulesSettings tournament={this.state.tournament} update={this.updateTournament.bind(this)}/>
-				<PostResultSettings tournament={this.state.tournament} update={this.updateTournament.bind(this)}/>        
-			</div>
-		);
-	}
+Body.defaultProps = {
+	session_token: null
 };
 
 export default withRouter(Body);
