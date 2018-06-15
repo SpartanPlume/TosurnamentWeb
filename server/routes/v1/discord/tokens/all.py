@@ -8,9 +8,6 @@ import constants
 from databases.token import Token
 from helpers.crypt import hash_str
 
-OAUTH2_ENDPOINT = 'https://discordapp.com/api/oauth2'
-REDIRECT_URI = 'http://localhost:3000/api/discord/callback'
-
 def store_token(handler, data):
     token = None
     session_token = handler.session_token
@@ -20,11 +17,11 @@ def store_token(handler, data):
         token = Token()
         session_token = str(uuid.uuid4())
         token.session_token = session_token
-        token.expiry_date = str(int(time.time()) + 604800)
+        token.expiry_date = str(int(time.time()) + 10)
         handler.session.add(token)
     token.access_token = data["access_token"]
     token.token_type = data["token_type"]
-    token.expires_in = data["expires_in"]
+    token.access_token_expiry_date = str(int(time.time()) + data["expires_in"])
     token.refresh_token = data["refresh_token"]
     token.scope = data["scope"]
     handler.session.update(token)
@@ -38,13 +35,13 @@ def post(handler, parameters, url_parameters, ids_parameters):
             'client_secret': constants.CLIENT_SECRET,
             'grant_type': 'authorization_code',
             'code': parameters['code'],
-            'redirect_uri': REDIRECT_URI
+            'redirect_uri': constants.DISCORD_REDIRECT_URI
         }
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
         try:
-            r = requests.post(OAUTH2_ENDPOINT + '/token', data=data, headers=headers)
+            r = requests.post(constants.DISCORD_OAUTH2_ENDPOINT + '/token', data=data, headers=headers)
             r.raise_for_status()
         except requests.exceptions.HTTPError:
             handler.logger.exception("Couldn't post the data to Discord API.")

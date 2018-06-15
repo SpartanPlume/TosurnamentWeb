@@ -3,7 +3,10 @@
 import os
 import importlib
 import logging
+import time
 from urllib import parse
+from databases.token import Token
+from helpers.crypt import hash_str
 
 def do_method(method, handler, parameters, url_parameters, ids_parameters, dir_to_list, module_name):
     module_dir = dir_to_list.replace("/", ".").replace("\\", ".")
@@ -48,6 +51,17 @@ def find_endpoint(method, handler, parameters, url_parameters, ids_parameters, d
 
 def do_endpoint(method, handler, endpoint, parameters):
     """Parse url parameters and ready up the search of the endpoint"""
+    token = handler.session.query(Token).where(Token.session_token == hash_str(handler.session_token)).first()
+    if token:
+        if int(token.expiry_date) < int(time.time()):
+            handler.session.delete(token)
+            handler.send_error(403, "Not connected")
+            return
+        elif token.access_token:
+            handler.refresh_token(token)
+    else:
+        handler.send_error(403, "Not connected")
+        return
     parsed_url = parse.urlparse(endpoint.strip("/"))
     if not find_endpoint(method, handler, parameters, parse.parse_qs(parsed_url.query), [], "routes", parsed_url.path):
         handler.send_error(404, "The resource at the location specified doesn't exist")

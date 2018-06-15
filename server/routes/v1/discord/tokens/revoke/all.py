@@ -26,5 +26,6 @@ def post(handler, parameters, url_parameters, ids_parameters):
         handler.logger.debug(r.text)
         handler.send_error(500, "Couldn't post the data to Discord API.")
         return
+    handler.session.delete(token)
     handler.send_json(r.text)
 

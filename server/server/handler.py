@@ -1,9 +1,12 @@
 """Handler of requests"""
 
 import json
+import requests
+import time
 from Crypto.Hash import SHA256
 from http.server import BaseHTTPRequestHandler
 import server.errors
+import constants
 
 def create_my_handler(router, session):
     class MyHandler(BaseHTTPRequestHandler):
@@ -48,6 +51,35 @@ def create_my_handler(router, session):
             self.end_headers()
             if error_code != 304:
                 self.wfile.write(bytes(json.dumps(server.errors.get_json_from_error(error_code, description)), "utf8"))
+
+        def refresh_token(self, token):
+            if int(token.access_token_expiry_date) < int(time.time()):
+                data = {
+                    'client_id': constants.CLIENT_ID,
+                    'client_secret': constants.CLIENT_SECRET,
+                    'grant_type': 'refresh_token',
+                    'refresh_token': token.refresh_token,
+                    'redirect_uri': constants.DISCORD_REDIRECT_URI,
+                    'scope': token.scope
+                }
+                headers = {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+                try:
+                    r = requests.post(constants.DISCORD_OAUTH2_ENDPOINT + '/token', data=data, headers=headers)
+                    r.raise_for_status()
+                except requests.exceptions.HTTPError:
+                    if "logger" in vars(self):
+                        self.logger.exception("Couldn't post the data to Discord API.")
+                        self.logger.debug(r.text)
+                    self.send_error(500, "Couldn't post the data to Discord API.")
+                    return
+                token.access_token = data["access_token"]
+                token.token_type = data["token_type"]
+                token.access_token_expiry_date = str(int(time.time()) + data["expires_in"])
+                token.refresh_token = data["refresh_token"]
+                token.scope = data["scope"]
+                self.session.update(token)
 
         def do_GET(self):
             self.session_token = self.headers.get("Authorization")
