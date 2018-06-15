@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Button, Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
+import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
+import Button from './Button';
 
 class Header extends React.Component {
     constructor(props) {
@@ -24,7 +25,7 @@ class Header extends React.Component {
         if (this.state.session_token) {
             login_button = (<React.Fragment><span>Connected</span></React.Fragment>);
         } else {
-            login_button = (<Button bsClass="login_button" onClick={(event) => window.location="https://discordapp.com/api/oauth2/authorize?client_id=378433574602539019&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fdiscord%2Fcallback&response_type=code&scope=identify%20guilds"}>Login with Discord</Button>);
+            login_button = (<Button id="login_button" value="Login with Discord" onClick={(event) => window.location="https://discordapp.com/api/oauth2/authorize?client_id=378433574602539019&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fdiscord%2Fcallback&response_type=code&scope=identify%20guilds"}/>);
         }
         return (
             <Navbar fixedTop={true}>

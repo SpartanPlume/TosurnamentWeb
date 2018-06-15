@@ -42,7 +42,7 @@
   text-align: center;
 }
 
-.login_button {
+#login_button {
   position: absolute;
   top: 22%;
   height: 60%;

@@ -40,7 +40,7 @@ class Button extends React.Component {
 		if (this.state.alone) {
 			return (
 				<div className="field_group">
-					{field_name} <button className="button" type="button" onClick={this.handleClick} disabled={this.state.disabled}>{this.state.value}</button>
+					{field_name} <button id={this.state.id} className="button" type="button" onClick={this.handleClick} disabled={this.state.disabled}>{this.state.value}</button>
 				</div>
 			);
 		} else {
