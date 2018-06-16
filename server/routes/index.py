@@ -59,7 +59,7 @@ def do_endpoint(method, handler, endpoint, parameters):
             return
         elif token.access_token:
             handler.refresh_token(token)
-    else:
+    elif endpoint != "/v1/discord/tokens":
         handler.send_error(403, "Not connected")
         return
     parsed_url = parse.urlparse(endpoint.strip("/"))

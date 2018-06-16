@@ -17,7 +17,7 @@ def store_token(handler, data):
         token = Token()
         session_token = str(uuid.uuid4())
         token.session_token = session_token
-        token.expiry_date = str(int(time.time()) + 10)
+        token.expiry_date = str(int(time.time()) + 2592000)
         handler.session.add(token)
     token.access_token = data["access_token"]
     token.token_type = data["token_type"]
