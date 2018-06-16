@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { PageHeader } from 'react-bootstrap';
 import TournamentSettings from './TournamentSettings';
-import Field from './Field';
 import SwitchButton from './SwitchButton';
 import Select from './Select';
 
@@ -118,9 +117,7 @@ class MainSettings extends TournamentSettings {
         return (
             <div className="main_settings">
                 <PageHeader bsClass="page_subheader"><small>Main settings</small></PageHeader>
-                <Field name="Acronym" value={this.state.tournament.acronym} onBlur={this.update.bind(null, "acronym")} placeholder="Acronym" canBeEmpty={false}/>
                 <Select name="Staff Channel" value={current_channel} options={formatted_channels} onChange={this.updateValue.bind(this, "staff_channel_id", this.state.channels)}/> 
-                <Select name="Admin Role" value={current_roles[this.state.tournament.admin_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "admin_role_id", this.state.roles)}/>
                 <Select name="Referee Role" value={current_roles[this.state.tournament.referee_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "referee_role_id", this.state.roles)}/>
                 <Select name="Streamer Role" value={current_roles[this.state.tournament.streamer_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "streamer_role_id", this.state.roles)}/>
                 <Select name="Commentator Role" value={current_roles[this.state.tournament.commentator_role_id]} options={formatted_roles} styles={roles_styles} onChange={this.updateValue.bind(this, "commentator_role_id", this.state.roles)}/>

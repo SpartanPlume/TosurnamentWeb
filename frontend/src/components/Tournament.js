@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 import fetchApi from '../utils/fetchApi';
 import Editable from './Editable';
+import OwnerOnlySettings from './OwnerOnlySettings';
 import MainSettings from './MainSettings';
 import BracketsSettings from './BracketsSettings';
 import ReschedulesSettings from './ReschedulesSettings';
@@ -44,7 +45,7 @@ class Tournament extends React.Component {
 
 	fetchData() {
 		if (this.state.guild && !this.state.tournament) {
-			fetchApi("/v1/tosurnament/tournaments?server_id=" + this.state.guild.id)
+			fetchApi("/v1/tosurnament/tournaments?server_id=" + this.state.guild.id, { headers: { "Authorization": this.props.session_token } })
 			.then(tournaments => tournaments[0] ? this.setState({ tournament: tournaments[0] }) : toast.error("No tournament running, this shouldn't happen, rethink your life decisions."))
 			.catch(error => toast.error(error.message))
 		}
@@ -137,9 +138,18 @@ class Tournament extends React.Component {
 		if (!this.state.tournament || (Object.keys(this.state.tournament).length === 0 && this.state.tournament.constructor === Object)) {
 			return (<div/>);
 		}
+		let name_field = null;
+		let owner_field = null;
+		if (this.state.guild.owner) {
+			name_field = (<Editable id="tournament_name" value={this.state.tournament.name} onBlur={this.updateTournament.bind(this, "name")} placeholder="My Tournament" canBeEmpty={false}/>);
+			owner_field = (<OwnerOnlySettings tournament={this.state.tournament} roles={this.state.roles}update={this.updateTournament.bind(this)}/>);
+		} else {
+			name_field = (<div id="tournament_name">{this.state.tournament.name}</div>);
+		}
 		return (
 			<div>
-				<Editable id="tournament_name" value={this.state.tournament.name} onBlur={this.updateTournament.bind(this, "name")} placeholder="My Tournament" canBeEmpty={false}/>
+				{name_field}
+				{owner_field}
 				<MainSettings tournament={this.state.tournament} channels={this.state.channels} roles={this.state.roles} update={this.updateTournament.bind(this)}/>
 				<BracketsSettings tournament={this.state.tournament} roles={this.state.roles} update={this.updateBracket.bind(this)} delete={this.deleteBracket.bind(this)}/>
 				<ReschedulesSettings tournament={this.state.tournament} update={this.updateTournament.bind(this)}/>
