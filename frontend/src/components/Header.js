@@ -1,7 +1,7 @@
 import React from 'react';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
-import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
+import {Navbar, Nav, NavDropdown, MenuItem, Image} from 'react-bootstrap';
 import Button from './Button';
 import fetchApi from '../utils/fetchApi';
 
@@ -53,7 +53,8 @@ class Header extends React.Component {
         var login_button;
         if (this.state.session_token) {
             if (this.state.user) {
-                login_button = (<NavDropdown id="basic-nav-dropdown" eventKey={10} title={this.state.user.username}><MenuItem eventKey={10.1} onSelect={(event) => this.revokeToken()}>Disconnection</MenuItem></NavDropdown>);
+                var title = (<div style={{display: "inline-block"}}><Image  style={{display: "inline-block", marginRight: "10px"}} responsive circle src={"https://cdn.discordapp.com/avatars/" + this.state.user.id + "/" + this.state.user.avatar + ".png?size=32"}/><span>{this.state.user.username}</span></div>);
+                login_button = (<NavDropdown style={{paddingTop: "10px"}} id="user_dropdown" eventKey={10} title={title}><MenuItem eventKey={10.1} onSelect={(event) => this.revokeToken()}>Disconnection</MenuItem></NavDropdown>);
             } else {
                 login_button = (<NavDropdown id="basic-nav-dropdown" eventKey={10} title={""}><MenuItem eventKey={10.1} onSelect={(event) => this.revokeToken()}>Disconnection</MenuItem></NavDropdown>);
             }
@@ -69,21 +70,6 @@ class Header extends React.Component {
                     <Navbar.Toggle/>
                 </Navbar.Header>
                 <Navbar.Collapse>
-                    <Nav>
-                        <NavItem eventKey={1} href="/tournaments">
-                            Tournaments
-                        </NavItem>
-                        <NavItem eventKey={2} href="/tournaments/115">
-                            Test
-                        </NavItem>
-                        <NavDropdown eventKey={3} title="Tournaments Test" id="basic-nav-dropdown">
-                            <MenuItem eventKey={3.1}>115</MenuItem>
-                            <MenuItem eventKey={3.2}>Another action</MenuItem>
-                            <MenuItem eventKey={3.3}>Something else here</MenuItem>
-                            <MenuItem divider />
-                            <MenuItem eventKey={3.4}>Separated link</MenuItem>
-                        </NavDropdown>
-                    </Nav>
                     <Nav pullRight>
                         {login_button}
                     </Nav>

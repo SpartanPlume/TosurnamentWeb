@@ -46,7 +46,7 @@ class Tournament extends React.Component {
 	fetchData() {
 		if (this.state.guild && !this.state.tournament) {
 			fetchApi("/v1/tosurnament/tournaments?server_id=" + this.state.guild.id, { headers: { "Authorization": this.props.session_token } })
-			.then(tournaments => tournaments[0] ? this.setState({ tournament: tournaments[0] }) : toast.error("No tournament running, this shouldn't happen, rethink your life decisions."))
+			.then(tournaments => tournaments[0] ? this.setState({ tournament: tournaments[0] }) : toast.error("No tournament running, create one before using the web interface."))
 			.catch(error => toast.error(error.message))
 		}
 		if (this.state.guild && this.props.session_token && (this.state.roles === null || this.state.channels === null)) {

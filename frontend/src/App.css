@@ -190,3 +190,9 @@ label {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+#user_dropdown {
+  padding: 0;
+  display: inherit;
+  width: 200px;
+}
