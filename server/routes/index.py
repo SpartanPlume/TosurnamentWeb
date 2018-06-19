@@ -14,8 +14,9 @@ def do_method(method, handler, parameters, url_parameters, ids_parameters, dir_t
         module = importlib.import_module(module_dir + module_name)
     except ModuleNotFoundError:
         return False
-    method_to_do = getattr(module, method)
-    if not method_to_do:
+    try:
+        method_to_do = getattr(module, method)
+    except AttributeError:
         handler.send_error(405, "The HTTP method used is not valid for the location specified")
         return True
     logger = logging.getLogger(dir_to_list.replace("\\", "/")[6:] + module_name.replace(".", "/"))
@@ -55,11 +56,13 @@ def do_endpoint(method, handler, endpoint, parameters):
     if token:
         if int(token.expiry_date) < int(time.time()):
             handler.session.delete(token)
+            logging.info("Token expired")
             handler.send_error(403, "Not connected")
             return
         elif token.access_token:
             handler.refresh_token(token)
     elif endpoint != "/v1/discord/tokens":
+        logging.info("No token")
         handler.send_error(403, "Not connected")
         return
     parsed_url = parse.urlparse(endpoint.strip("/"))

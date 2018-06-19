@@ -16,10 +16,15 @@ def post(handler, parameters, url_parameters, ids_parameters):
         handler.send_json(401, "This token doesn't exist.")
         return
     headers = {
-        'Authorization': 'Bearer ' + token.access_token
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    data = {
+        'client_id': constants.CLIENT_ID,
+        'client_secret': constants.CLIENT_SECRET,
+        'token': token.access_token
     }
     try:
-        r = requests.post(OAUTH2_ENDPOINT + '/token/revoke', headers=headers)
+        r = requests.post(OAUTH2_ENDPOINT + '/token/revoke', headers=headers, data=data)
         r.raise_for_status()
     except requests.exceptions.HTTPError:
         handler.logger.exception("Couldn't post the data to Discord API.")
@@ -27,5 +32,5 @@ def post(handler, parameters, url_parameters, ids_parameters):
         handler.send_error(500, "Couldn't post the data to Discord API.")
         return
     handler.session.delete(token)
-    handler.send_json(r.text)
+    handler.send_json("{}")
 

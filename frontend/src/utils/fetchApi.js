@@ -1,6 +1,6 @@
 function delete_token() {
 	localStorage.removeItem("session_token");
-	window.location.reload();
+	window.location = "/";
 }
 
 export default function fetchApi(input, init = {}) {

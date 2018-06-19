@@ -83,21 +83,23 @@ def create_my_handler(router, session):
 
         def do_GET(self):
             self.session_token = self.headers.get("Authorization")
-            method_to_do = getattr(self.router, "get")
-            if not method_to_do:
+            try:
+                method_to_do = getattr(self.router, "get")
+            except AttributeError:
                 self.send_error(404, "The resource at the location specified doesn't exist")
             print(self.path)
             method_to_do(self, self.path)
 
         def do_POST(self):
             body = self.rfile.read(int(self.headers.get('content-length', 0)))
-            parameters = json.loads(body.decode('utf-8'))
-            self.session_token = None
-            if "session_token" in parameters:
-                self.session_token = parameters["session_token"]
+            try:
+                parameters = json.loads(body.decode('utf-8'))
+            except json.JSONDecodeError:
+                parameters = None
             self.session_token = self.headers.get("Authorization")
-            method_to_do = getattr(self.router, "post")
-            if not method_to_do:
+            try:
+                method_to_do = getattr(self.router, "post")
+            except AttributeError:
                 self.send_error(404, "The resource at the location specified doesn't exist")
             print(self.path)
             method_to_do(self, self.path, parameters)
@@ -106,16 +108,18 @@ def create_my_handler(router, session):
             body = self.rfile.read(int(self.headers.get('content-length', 0)))
             parameters = json.loads(body.decode('utf-8'))
             self.session_token = self.headers.get("Authorization")
-            method_to_do = getattr(self.router, "put")
-            if not method_to_do:
+            try:
+                method_to_do = getattr(self.router, "put")
+            except AttributeError:
                 self.send_error(404, "The resource at the location specified doesn't exist")
             print(self.path)
             method_to_do(self, self.path, parameters)
 
         def do_DELETE(self):
             self.session_token = self.headers.get("Authorization")
-            method_to_do = getattr(self.router, "delete")
-            if not method_to_do:
+            try:
+                method_to_do = getattr(self.router, "delete")
+            except AttributeError:
                 self.send_error(404, "The resource at the location specified doesn't exist")
             print(self.path)
             method_to_do(self, self.path)
