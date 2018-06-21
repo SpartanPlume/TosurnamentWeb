@@ -59,7 +59,11 @@ class Header extends React.Component {
                 login_button = (<NavDropdown id="basic-nav-dropdown" eventKey={10} title={""}><MenuItem eventKey={10.1} onSelect={(event) => this.revokeToken()}>Disconnection</MenuItem></NavDropdown>);
             }
         } else {
-            login_button = (<Button id="login_button" value="Login with Discord" onClick={(event) => window.location="https://discordapp.com/api/oauth2/authorize?client_id=378433574602539019&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fdiscord%2Fcallback&response_type=code&scope=identify%20guilds"}/>);
+            var redirect_uri = "http://" + window.location.host + "/api/discord/callback&response_type=code&scope=identify guilds";
+            redirect_uri = redirect_uri.replace(/\//g, "%2F");
+            redirect_uri = redirect_uri.replace(/:/g, "%3A");
+            redirect_uri = redirect_uri.replace(/ /g, "%20");
+            login_button = (<Button id="login_button" value="Login with Discord" onClick={(event) => window.location = "https://discordapp.com/api/oauth2/authorize?client_id=378433574602539019&redirect_uri=" + redirect_uri}/>);
         }
         return (
             <Navbar fixedTop={true}>
