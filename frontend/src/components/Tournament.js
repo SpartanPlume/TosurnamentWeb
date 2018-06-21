@@ -51,8 +51,8 @@ class Tournament extends React.Component {
 		}
 		if (this.state.guild && this.props.session_token && (this.state.roles === null || this.state.channels === null)) {
 			Promise.all([
-				fetchApi("/v1/discord/guilds/" + this.state.guild.id + "/roles", { headers: { "Authorization": this.props.session_token } }),
-				fetchApi("/v1/discord/guilds/" + this.state.guild.id + "/channels", { headers: { "Authorization": this.props.session_token } })
+				fetchApi("/v1/discord/guilds/" + this.state.guild.id + "/roles", { headers: { 'Authorization': this.props.session_token } }),
+				fetchApi("/v1/discord/guilds/" + this.state.guild.id + "/channels", { headers: { 'Authorization': this.props.session_token } })
 			])
 			.then(([roles, channels]) => {this.setState({ tournament: this.state.tournament, guild: this.state.guild, roles: roles, channels: channels})})
 			.catch(error => toast.error(error.message));
@@ -70,6 +70,7 @@ class Tournament extends React.Component {
 				fetchApi("/v1/tosurnament/tournaments/" + this.state.tournament.id, {
 					method: "PUT",
 					headers: {
+						'Authorization': this.props.session_token,
 						'Content-type': 'application/json'
 					},
 					body: JSON.stringify(formData)
@@ -93,6 +94,7 @@ class Tournament extends React.Component {
 					fetchApi("/v1/tosurnament/tournaments/" + this.state.tournament.id + "/brackets/" + bracket_id, {
 						method: "PUT",
 						headers: {
+							'Authorization': this.props.session_token,
 							'Content-type': 'application/json'
 						},
 						body: JSON.stringify(formData)
@@ -108,6 +110,7 @@ class Tournament extends React.Component {
 						fetchApi("/v1/tosurnament/tournaments/" + this.state.tournament.id + "/brackets", {
 							method: "POST",
 							headers: {
+								'Authorization': this.props.session_token,
 								'Content-type': 'application/json'
 							},
 							body: JSON.stringify(formData)
@@ -126,7 +129,10 @@ class Tournament extends React.Component {
 			if (this.state.tournament !== undefined) {
 				let toast_id = toast.info("Deleting bracket...");
 				fetchApi("/v1/tosurnament/tournaments/" + this.state.tournament.id + "/brackets/" + bracket_id, {
-					method: "DELETE"
+					method: "DELETE",
+					headers: {
+						'Authorization': this.props.session_token
+					}
 				})
 				.then(results => {toast.dismiss(toast_id); toast.success("Success!")})
 				.catch(error => {toast.dismiss(toast_id); toast.error(error.message)});
