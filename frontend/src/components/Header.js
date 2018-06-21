@@ -59,7 +59,11 @@ class Header extends React.Component {
                 login_button = (<NavDropdown id="basic-nav-dropdown" eventKey={10} title={""}><MenuItem eventKey={10.1} onSelect={(event) => this.revokeToken()}>Disconnection</MenuItem></NavDropdown>);
             }
         } else {
-            var redirect_uri = "http://" + window.location.host + "/api/discord/callback&response_type=code&scope=identify guilds";
+            var protocol = window.location.protocol;
+            if (!protocol) {
+                protocol = "http:"
+            }
+            var redirect_uri = protocol + "//" + window.location.host + "/api/discord/callback&response_type=code&scope=identify guilds";
             redirect_uri = redirect_uri.replace(/\//g, "%2F");
             redirect_uri = redirect_uri.replace(/:/g, "%3A");
             redirect_uri = redirect_uri.replace(/ /g, "%20");
