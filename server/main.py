@@ -41,7 +41,7 @@ def main():
             if filename.endswith(".py"):
                 importlib.import_module(dirpath.replace("/", ".").replace("\\", ".") + "." + filename[:-3])
     handler = create_my_handler(module, mysql_wrapper.Session(constants.DATABASE_USERNAME, constants.DATABASE_PASSWORD, "tosurnament"))
-    httpd = HTTPServer(("localhost", 4000), handler)
+    httpd = HTTPServer(("", 4000), handler)
     print("Started server at http://localhost:4000")
     httpd.serve_forever()
 
