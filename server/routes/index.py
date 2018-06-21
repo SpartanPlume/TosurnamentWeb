@@ -61,7 +61,7 @@ def do_endpoint(method, handler, endpoint, parameters):
             return
         elif token.access_token:
             handler.refresh_token(token)
-    elif endpoint != "/v1/discord/tokens":
+    elif endpoint != "/api/v1/discord/tokens":
         logging.info("No token")
         handler.send_error(403, "Not connected")
         return
