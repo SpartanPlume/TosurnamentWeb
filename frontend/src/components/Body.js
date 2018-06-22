@@ -2,11 +2,10 @@ import React from 'react';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
+import qs from 'qs';
 import fetchApi from '../utils/fetchApi';
 import Home from './Home';
 import Tournament from './Tournament';
-
-const queryString = require('query-string');
 
 class Body extends React.Component {
 	constructor(props) {
@@ -40,7 +39,8 @@ class Body extends React.Component {
 	}
 
 	discordCallback(props) {
-		const formData = queryString.parse(props.location.search);
+		const formData = qs.parse(props.location.search.substr(1));
+		console.log(props.location.search);
 		if (this.state.session_token) {
 			formData["session_token"] = this.state.session_token;
 		}

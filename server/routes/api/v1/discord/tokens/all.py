@@ -8,6 +8,23 @@ import constants
 from databases.token import Token
 from helpers.crypt import hash_str
 
+API_ENDPOINT = 'https://discordapp.com/api/v6'
+
+def get_user_id(handler, data):
+    headers = {
+        'Authorization': 'Bearer ' + data["access_token"]
+    }
+    try:
+        r = requests.get(API_ENDPOINT + '/users/@me', headers=headers)
+        r.raise_for_status()
+    except requests.exceptions.HTTPError:
+        handler.logger.exception("Couldn't get the data from Discord API.")
+        handler.logger.debug(r.text)
+        handler.send_error(500, "Couldn't get the data from Discord API.")
+        return None
+    user = json.loads(r.text)
+    return user["id"]
+
 def store_token(handler, data):
     token = None
     session_token = handler.session_token
@@ -15,6 +32,9 @@ def store_token(handler, data):
         token = handler.session.query(Token).where(Token.session_token == hash_str(session_token)).first()
     if not token:
         token = Token()
+        token.discord_user_id = get_user_id(handler, data)
+        if not token.discord_user_id:
+            return None
         session_token = str(uuid.uuid4())
         token.session_token = session_token
         token.expiry_date = str(int(time.time()) + 2592000)
@@ -49,6 +69,8 @@ def post(handler, parameters, url_parameters, ids_parameters):
             handler.send_error(500, "Couldn't post the data to Discord API.")
             return
         session_token = store_token(handler, r.json())
+        if not session_token:
+            return
         data = {
             'session_token': session_token
         }

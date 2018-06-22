@@ -3,26 +3,6 @@
 from databases.tournament import Tournament
 from databases.bracket import Bracket
 
-def get(handler, parameters, url_parameters, ids_parameters):
-    """GET method"""
-    [tournament_id] = ids_parameters
-    result = handler.session.query(Tournament).where(Tournament.id == int(tournament_id)).first()
-    if result:
-        brackets = handler.session.query(Bracket).where(Bracket.tournament_id == result.id).all()
-        json_brackets = []
-        if brackets:
-            for bracket in brackets:
-                json_brackets.append(bracket.get_dict())
-        result.brackets = json_brackets
-        etag = handler.get_etag(result)
-        if not etag:
-            handler.send_error(304)
-            return
-        handler.send_object(result, etag)
-    else:
-        handler.logger.debug("The tournament " + tournament_id + " does not exists")
-        handler.send_error(404, "This tournament does not exist")
-
 def put(handler, parameters, url_parameters, ids_parameters):
     """PUT method"""
     [tournament_id] = ids_parameters

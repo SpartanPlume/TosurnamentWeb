@@ -8,6 +8,7 @@ class Token(Base):
 
     id = int()
     session_token = bytes()
+    discord_user_id = bytes()
     access_token = bytes()
     token_type = bytes()
     access_token_expiry_date = bytes()
